@@ -1,6 +1,7 @@
 using Serilog;
 using TaskManagement.API.Endpoints;
 using TaskManagement.API.Extensions;
+using TaskManagement.Application.Extensions;
 using TaskManagement.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

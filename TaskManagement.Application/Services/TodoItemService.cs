@@ -41,20 +41,21 @@ public class TodoItemService : ITodoItemService
 
     }
 
-    public async Task<IEnumerable<TodoItemDto>> GetAllTodoItemsAsync()
+    public async Task<PagedResultDto<TodoItemDto>> GetAllTodoItemsAsync(TodoQueryParametersDto query)
     {
 
-        var items = await _repository.GetAllAsync();
-        return items.Select(MapToDto);
+        var pagedItems = await _repository.GetAllAsync(query);
+        return new PagedResultDto<TodoItemDto>
+        {
+            Items = pagedItems.Items.Select(MapToDto),
+            PageNumber = pagedItems.PageNumber,
+            PageSize = pagedItems.PageSize,
+            TotalCount = pagedItems.TotalCount
+        };
 
     }
 
-    public async Task<IEnumerable<TodoItemDto>> GetCompletedTodoItemsAsync()
-    {
 
-        var items = await _repository.GetByStatusAsync(TodoItemStatus.Completed);
-        return items.Select(MapToDto);
-    }
 
     public async Task<IEnumerable<TodoItemDto>> GetOverdueTodoItemsAsync()
     {
@@ -62,11 +63,7 @@ public class TodoItemService : ITodoItemService
         return items.Select(MapToDto);
     }
 
-    public async Task<IEnumerable<TodoItemDto>> GetPendingTodoItemsAsync()
-    {
-        var items = await _repository.GetByStatusAsync(TodoItemStatus.Pending);
-        return items.Select(MapToDto);
-    }
+
 
     public async Task<TodoItemDto> GetTodoItemByIdAsync(Guid id)
     {
@@ -124,15 +121,5 @@ public class TodoItemService : ITodoItemService
 
     }
 
-    public async Task<IEnumerable<TodoItemDto>> GetInProgressTodoItemsAsync()
-    {
-        var items = await _repository.GetByStatusAsync(TodoItemStatus.InProgress);
-        return items.Select(MapToDto);
-    }
 
-    public async Task<IEnumerable<TodoItemDto>> GetCancelledTodoItemsAsync()
-    {
-        var items = await _repository.GetByStatusAsync(TodoItemStatus.Cancelled);
-        return items.Select(MapToDto);
-    }
 }
