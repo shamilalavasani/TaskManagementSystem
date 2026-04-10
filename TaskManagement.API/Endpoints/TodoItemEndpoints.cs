@@ -1,4 +1,5 @@
-﻿using TaskManagement.Application.DTOs;
+﻿using TaskManagement.Application.DTOs.QueryParameters;
+using TaskManagement.Application.DTOs.TodoItemDTOs;
 using TaskManagement.Application.Interfaces;
 namespace TaskManagement.API.Endpoints;
 

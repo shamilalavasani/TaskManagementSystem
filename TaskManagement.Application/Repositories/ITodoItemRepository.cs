@@ -1,4 +1,5 @@
-﻿using TaskManagement.Application.DTOs;
+﻿using TaskManagement.Application.DTOs.CommonDTOs;
+using TaskManagement.Application.DTOs.QueryParameters;
 using TaskManagement.Domain.Entities;
 
 

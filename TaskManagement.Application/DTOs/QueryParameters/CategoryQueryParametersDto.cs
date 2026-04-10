@@ -1,9 +1,8 @@
-﻿using TaskManagement.Domain.Enums;
+﻿namespace TaskManagement.Application.DTOs.QueryParameters;
 
-namespace TaskManagement.Application.DTOs;
-
-public class TodoQueryParametersDto
+public class CategoryQueryParametersDto
 {
+
     private const int MaxPageSize = 50;
     private const int DefaultPageSize = 10;
     private const int DefaultPageNumber = 1;
@@ -19,12 +18,12 @@ public class TodoQueryParametersDto
         get => _pageSize;
         set => _pageSize = value <= 0 ? DefaultPageSize : Math.Min(value, MaxPageSize);
     }
-    //Filtering
-    public TodoItemStatus? Status { get; set; }
-    public DateTime? DueBefore { get; set; }
-    public DateTime? DueAfter { get; set; }
+
+
+
     //Search
-    public string? Search { get; set; }// for title or description
+    public string? Search { get; set; }// for name or description
+
     //Sorting
     public string? SortBy { get; set; } = "createdAt";
     public string? SortDirection { get; set; } = "desc";

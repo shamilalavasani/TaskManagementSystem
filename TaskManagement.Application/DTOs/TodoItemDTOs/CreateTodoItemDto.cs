@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TaskManagement.Domain.Enums;
 
-namespace TaskManagement.Application.DTOs;
+namespace TaskManagement.Application.DTOs.TodoItemDTOs;
 
 public class CreateTodoItemDto
 {

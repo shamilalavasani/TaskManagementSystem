@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskManagement.Application.DTOs;
+using TaskManagement.Application.DTOs.CommonDTOs;
+using TaskManagement.Application.DTOs.QueryParameters;
 using TaskManagement.Application.Repositories;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Enums;
@@ -32,7 +33,7 @@ public class TodoItemRepository : ITodoItemRepository
 
     public async Task<PagedResultDto<TodoItem>> GetAllAsync(TodoQueryParametersDto query)
     {
-        IQueryable<TodoItem> todoQuery = _context.TodoItems.AsQueryable();
+        IQueryable<TodoItem> todoQuery = _context.TodoItems.AsNoTracking().AsQueryable();
 
         // Filtering by Status
         if (query.Status.HasValue)
@@ -92,7 +93,7 @@ public class TodoItemRepository : ITodoItemRepository
 
     public async Task<TodoItem?> GetByIdAsync(Guid id)
     {
-        return await _context.TodoItems.FindAsync(id);
+        return await _context.TodoItems.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
     }
 
 

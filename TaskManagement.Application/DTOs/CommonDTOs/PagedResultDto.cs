@@ -1,4 +1,4 @@
-﻿namespace TaskManagement.Application.DTOs;
+﻿namespace TaskManagement.Application.DTOs.CommonDTOs;
 
 public class PagedResultDto<T>
 {
