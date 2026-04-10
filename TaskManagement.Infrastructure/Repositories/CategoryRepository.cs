@@ -32,9 +32,13 @@ public class CategoryRepository : ICategoryRepository
         return await _context.Categories.AnyAsync(x => x.Id == id);
     }
 
-    public async Task<bool> ExistsByNameAsync(string name)
+    public async Task<bool> ExistsByNameAsync(string name, Guid? excludeId = null)
     {
-        return await _context.Categories.AnyAsync(x => x.Name.ToLower().Trim() == name.ToLower().Trim());
+        var normalizedName = name.Trim().ToLower();
+
+        return await _context.Categories.AnyAsync(x =>
+            x.Name.ToLower() == normalizedName &&
+            (!excludeId.HasValue || x.Id != excludeId.Value));
     }
 
     public async Task<PagedResultDto<Category>> GetAllAsync(CategoryQueryParametersDto query)

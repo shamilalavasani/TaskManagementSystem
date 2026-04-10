@@ -103,6 +103,17 @@ public class TodoItemService : ITodoItemService
 
     }
 
+
+    public async Task UpdateStatusTodoItemAsync(Guid id, TodoItemStatus updateStatus)
+    {
+        var item = await _repository.GetByIdAsync(id);
+        if (item is null)
+            throw new KeyNotFoundException("Todo item not found.");
+
+        item.ChangeStatus(updateStatus);
+        await _repository.UpdateAsync(item);
+
+    }
     private static TodoItemDto MapToDto(TodoItem item)
     {
         return new TodoItemDto
@@ -116,17 +127,5 @@ public class TodoItemService : ITodoItemService
             Priority = item.Priority
         };
     }
-
-    public async Task UpdateStatusTodoItemAsync(Guid id, TodoItemStatus updateStatus)
-    {
-        var item = await _repository.GetByIdAsync(id);
-        if (item is null)
-            throw new KeyNotFoundException("Todo item not found.");
-
-        item.ChangeStatus(updateStatus);
-        await _repository.UpdateAsync(item);
-
-    }
-
 
 }
