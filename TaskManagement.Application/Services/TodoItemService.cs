@@ -22,7 +22,8 @@ public class TodoItemService : ITodoItemService
        createDto.Title,
        createDto.Description,
        createDto.DueDate,
-         createDto.Priority
+       createDto.CategoryId,
+       createDto.Priority
    );
 
         var createdItem = await _repository.AddAsync(newItem);
@@ -91,6 +92,7 @@ public class TodoItemService : ITodoItemService
                 updateDto.Title,
                 updateDto.Description,
                 updateDto.DueDate,
+                updateDto.CategoryId,
                 updateDto.Priority
 
             );

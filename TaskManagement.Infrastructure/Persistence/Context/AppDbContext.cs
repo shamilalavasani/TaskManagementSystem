@@ -10,11 +10,13 @@ public class AppDbContext : DbContext
 
     }
     public DbSet<TodoItem> TodoItems { get; set; }
-    protected override void OnModelCreating(ModelBuilder modelbuilder)
-    {
-        base.OnModelCreating(modelbuilder);
+    public DbSet<Category> Categories { get; set; }
 
-        modelbuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
 
     }

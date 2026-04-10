@@ -13,12 +13,14 @@ public class TodoItem
     public DateTime CreatedAt { get; private set; }
     public DateTime DueDate { get; private set; }
     public TodoPriority Priority { get; private set; }
+    public Guid CategoryId { get; private set; }
+    public Category Category { get; private set; } = null!;
 
     private TodoItem() { }// for EF Core
 
-    public TodoItem(string title, string description, DateTime dueDate, TodoPriority priority = TodoPriority.Medium)
+    public TodoItem(string title, string description, DateTime dueDate, Guid categoryId, TodoPriority priority = TodoPriority.Medium)
     {
-        ValidateInputs(title, description, dueDate);
+        ValidateInputs(title, description, dueDate, categoryId);
 
         Id = Guid.NewGuid();
 
@@ -28,11 +30,12 @@ public class TodoItem
         CompletionStatus = TodoItemStatus.Pending;
         this.DueDate = dueDate;
         this.Priority = priority;
+        this.CategoryId = categoryId;
 
 
 
     }
-    private void ValidateInputs(string title, string description, DateTime dueDate)
+    private void ValidateInputs(string title, string description, DateTime dueDate, Guid categoryId)
     {
 
         if (string.IsNullOrWhiteSpace(title))
@@ -51,24 +54,52 @@ public class TodoItem
         //if (createdByUserId <= 0)
         //    throw new ArgumentException("CreatedByUserId must be a positive integer.", nameof(createdByUserId));
 
+        if (categoryId == Guid.Empty)
+            throw new ArgumentException("CategoryId must be a valid GUID.", nameof(categoryId));
 
     }
 
-    public void UpdateDetails(string title, string description, DateTime dueDate, TodoPriority priority)
+    public void UpdateDetails(string title, string description, DateTime dueDate, Guid categoryId, TodoPriority priority)
     {
 
-        ValidateInputs(title, description, dueDate);
+        ValidateInputs(title, description, dueDate, categoryId);
         Title = title;
         Description = description;
         DueDate = dueDate;
+
+        CategoryId = categoryId;
         Priority = priority;
-        // CompletionStatus = completionStatus;
+
     }
 
-    public void ChangeStatus(TodoItemStatus status)
+    public void ChangeStatus(TodoItemStatus newStatus)
     {
-        CompletionStatus = status;
-    }
+        if (CompletionStatus == newStatus)
+            return;
 
+        switch (CompletionStatus)
+        {
+            case TodoItemStatus.Pending:
+                if (newStatus != TodoItemStatus.InProgress && newStatus != TodoItemStatus.Cancelled)
+                    throw new InvalidOperationException("Invalid status transition from Pending.");
+                break;
+
+            case TodoItemStatus.InProgress:
+                if (newStatus != TodoItemStatus.Completed && newStatus != TodoItemStatus.Cancelled)
+                    throw new InvalidOperationException("Invalid status transition from InProgress.");
+                break;
+
+            case TodoItemStatus.Completed:
+            case TodoItemStatus.Cancelled:
+                throw new InvalidOperationException("Cannot change status once it is Completed or Cancelled.");
+        }
+
+        CompletionStatus = newStatus;
+    }
+    //these are ok:
+    //Pending → InProgress
+    //InProgress → Completed
+    //Pending → Cancelled
+    //InProgress → Cancelled
 
 }
