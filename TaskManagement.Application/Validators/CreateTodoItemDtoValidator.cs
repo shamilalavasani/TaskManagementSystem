@@ -17,5 +17,8 @@ public class CreateTodoItemDtoValidator : AbstractValidator<CreateTodoItemDto>
         RuleFor(x => x.DueDate)
             .GreaterThan(DateTime.UtcNow)
             .WithMessage("Due date must be in the future.");
+
+        RuleFor(x => x.Priority).IsInEnum()
+            .WithMessage("Priority is required.");
     }
 }

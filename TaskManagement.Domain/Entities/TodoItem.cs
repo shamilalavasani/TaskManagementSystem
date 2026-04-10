@@ -12,10 +12,11 @@ public class TodoItem
     public TodoItemStatus CompletionStatus { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime DueDate { get; private set; }
+    public TodoPriority Priority { get; private set; }
 
     private TodoItem() { }// for EF Core
 
-    public TodoItem(string title, string description, DateTime dueDate)
+    public TodoItem(string title, string description, DateTime dueDate, TodoPriority priority = TodoPriority.Medium)
     {
         ValidateInputs(title, description, dueDate);
 
@@ -26,6 +27,7 @@ public class TodoItem
         this.Description = description;
         CompletionStatus = TodoItemStatus.Pending;
         this.DueDate = dueDate;
+        this.Priority = priority;
 
 
 
@@ -52,13 +54,14 @@ public class TodoItem
 
     }
 
-    public void UpdateDetails(string title, string description, DateTime dueDate)
+    public void UpdateDetails(string title, string description, DateTime dueDate, TodoPriority priority)
     {
 
         ValidateInputs(title, description, dueDate);
         Title = title;
         Description = description;
         DueDate = dueDate;
+        Priority = priority;
         // CompletionStatus = completionStatus;
     }
 

@@ -21,5 +21,9 @@ public class UpdateTodoItemDtoValidator : AbstractValidator<UpdateTodoItemDto>
         RuleFor(x => x.CompletionStatus)
             .IsInEnum()
             .WithMessage("Invalid status value.");
+
+        RuleFor(x => x.Priority)
+            .IsInEnum()
+            .WithMessage("Invalid Priority value.");
     }
 }

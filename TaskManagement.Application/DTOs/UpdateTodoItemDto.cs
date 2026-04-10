@@ -12,5 +12,6 @@ public class UpdateTodoItemDto
 
     public TodoItemStatus CompletionStatus { get; set; }
     public DateTime DueDate { get; set; }
+    public TodoPriority Priority { get; set; }
 }
 

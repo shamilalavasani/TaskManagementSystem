@@ -21,7 +21,8 @@ public class TodoItemService : ITodoItemService
 
        createDto.Title,
        createDto.Description,
-       createDto.DueDate
+       createDto.DueDate,
+         createDto.Priority
    );
 
         var createdItem = await _repository.AddAsync(newItem);
@@ -89,7 +90,8 @@ public class TodoItemService : ITodoItemService
         item.UpdateDetails(
                 updateDto.Title,
                 updateDto.Description,
-                updateDto.DueDate
+                updateDto.DueDate,
+                updateDto.Priority
 
             );
         item.ChangeStatus(updateDto.CompletionStatus);
@@ -106,7 +108,8 @@ public class TodoItemService : ITodoItemService
             Description = item.Description,
             CompletionStatus = item.CompletionStatus,
             CreatedAt = item.CreatedAt,
-            DueDate = item.DueDate
+            DueDate = item.DueDate,
+            Priority = item.Priority
         };
     }
 

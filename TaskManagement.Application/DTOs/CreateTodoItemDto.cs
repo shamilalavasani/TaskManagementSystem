@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TaskManagement.Domain.Enums;
 
 namespace TaskManagement.Application.DTOs;
 
@@ -9,6 +10,7 @@ public class CreateTodoItemDto
     [Required]
     public string Description { get; set; } = string.Empty;
     public DateTime DueDate { get; set; }
+    public TodoPriority Priority { get; set; }
 }
 
 

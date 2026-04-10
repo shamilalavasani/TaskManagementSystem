@@ -15,5 +15,6 @@ public class TodoItemDto
     public TodoItemStatus CompletionStatus { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime DueDate { get; set; }
+    public TodoPriority Priority { get; set; }
 }
 
