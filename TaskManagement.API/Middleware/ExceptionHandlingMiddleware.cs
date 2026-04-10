@@ -1,46 +1,50 @@
 ﻿using System.Net;
-using System.Text.Json;
+using TaskManagement.API.Common;
 
 namespace TaskManagement.API.Middleware;
 
 public class ExceptionHandlingMiddleware
 {
-
     private readonly RequestDelegate _next;
+
     public ExceptionHandlingMiddleware(RequestDelegate next)
     {
         _next = next;
     }
+
     public async Task InvokeAsync(HttpContext context)
     {
         try
         {
             await _next(context);
         }
-        catch (Exception ex)
+        catch (Exception exception)
         {
-            //context.Response.ContentType = "application/json";
-            //context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            //var response = new { message = ex.Message };
-            //await context.Response.WriteAsJsonAsync(response);
-            await HandleExceptionAsync(context, ex);
+            await HandleExceptionAsync(context, exception);
         }
     }
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+
+    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
+
         var statusCode = exception switch
         {
             KeyNotFoundException => HttpStatusCode.NotFound,
             ArgumentException => HttpStatusCode.BadRequest,
             _ => HttpStatusCode.InternalServerError
         };
+
         context.Response.StatusCode = (int)statusCode;
-        var response = new
+
+        var response = new ErrorResponse
         {
-            message = exception.Message,
-            statusCode = context.Response.StatusCode
+            Message = statusCode == HttpStatusCode.InternalServerError
+                ? "An unexpected error occurred."
+                : exception.Message,
+            StatusCode = context.Response.StatusCode
         };
-        return context.Response.WriteAsync(JsonSerializer.Serialize(response));
+
+        await context.Response.WriteAsJsonAsync(response);
     }
 }

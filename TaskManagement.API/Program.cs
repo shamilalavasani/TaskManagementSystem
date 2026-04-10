@@ -30,7 +30,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Middleware
-app.UseCustomExceptionHandler();
+app.UseGlobalExceptionHandling();
 app.UseRequestResponseLogging();
 app.UseHttpsRedirection();
 

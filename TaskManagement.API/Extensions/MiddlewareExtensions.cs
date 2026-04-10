@@ -4,7 +4,7 @@ namespace TaskManagement.API.Extensions;
 
 public static class MiddlewareExtensions
 {
-    public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder app)
+    public static IApplicationBuilder UseGlobalExceptionHandling(this IApplicationBuilder app)
     {
         return app.UseMiddleware<ExceptionHandlingMiddleware>();
     }
