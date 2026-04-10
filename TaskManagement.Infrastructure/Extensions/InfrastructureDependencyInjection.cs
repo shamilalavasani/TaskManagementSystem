@@ -8,7 +8,7 @@ using TaskManagement.Infrastructure.Repositories;
 
 namespace TaskManagement.Infrastructure.Extensions;
 
-public static class InfraDependencyInjection
+public static class InfrastructureDependencyInjection
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,

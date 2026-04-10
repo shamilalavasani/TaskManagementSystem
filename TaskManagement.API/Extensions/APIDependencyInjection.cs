@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using TaskManagement.Application.Validators;
 namespace TaskManagement.API.Extensions;
 
-public static class APIDependencyInjection
+public static class ApiDependencyInjection
 {
 
     public static IServiceCollection AddApiServices(this IServiceCollection services)

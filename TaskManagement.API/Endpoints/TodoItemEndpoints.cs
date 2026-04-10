@@ -45,9 +45,8 @@ public static class TodoItemEndpoints
     private static async Task<IResult> UpdateStatusTodoItem(Guid id, UpdateTodoItemStatusDto dto, ITodoItemService service)
     {
 
-        //if (dto is null)
-        //    throw new ArgumentException("Request body is required.");
-        await service.UpdateStatusTodoItemAsync(id, dto.Status); // from body
+
+        await service.UpdateStatusTodoItemAsync(id, dto.Status);
         return Results.NoContent();
 
     }
