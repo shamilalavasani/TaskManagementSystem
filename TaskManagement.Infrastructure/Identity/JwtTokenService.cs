@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;//for IConfiguration and read from appsetting.json (key,issuer, audience, expire time)
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -31,10 +31,10 @@ public class JwtTokenService : IJwtTokenService
         }
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!)
+            Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]!)//secret key to byte array for signing the token
         );
 
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);//create signing credentials using the key and specify the algorithm (HMAC SHA256)
 
         var expireDate = DateTime.UtcNow.AddMinutes(
             Convert.ToDouble(_configuration["JwtSettings:ExpireMinutes"])
@@ -48,7 +48,7 @@ public class JwtTokenService : IJwtTokenService
             signingCredentials: credentials
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return new JwtSecurityTokenHandler().WriteToken(token);//generate the token and return it as a string
     }
 
     public DateTime GetTokenExpiration()
