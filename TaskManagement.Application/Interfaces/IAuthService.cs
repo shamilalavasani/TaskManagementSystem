@@ -1,5 +1,4 @@
-﻿
-using TaskManagement.Application.DTOs.AuthDTOs;
+﻿using TaskManagement.Application.DTOs.AuthDTOs;
 
 namespace TaskManagement.Application.Interfaces;
 

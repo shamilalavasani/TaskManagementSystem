@@ -23,7 +23,6 @@ public class ExceptionHandlingMiddleware
             await HandleExceptionAsync(context, exception);
         }
     }
-
     private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
@@ -39,12 +38,34 @@ public class ExceptionHandlingMiddleware
 
         var response = new ErrorResponse
         {
-            Message = statusCode == HttpStatusCode.InternalServerError
-                ? "An unexpected error occurred."
-                : exception.Message,
+            Message = exception.Message,
             StatusCode = context.Response.StatusCode
         };
 
         await context.Response.WriteAsJsonAsync(response);
     }
+
+    // private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    // {
+    //context.Response.ContentType = "application/json";
+
+    //    var statusCode = exception switch
+    //    {
+    //        KeyNotFoundException => HttpStatusCode.NotFound,
+    //        ArgumentException => HttpStatusCode.BadRequest,
+    //        _ => HttpStatusCode.InternalServerError
+    //    };
+
+    //    context.Response.StatusCode = (int)statusCode;
+
+    //    var response = new ErrorResponse
+    //    {
+    //        Message = statusCode == HttpStatusCode.InternalServerError
+    //            ? "An unexpected error occurred."
+    //            : exception.Message,
+    //        StatusCode = context.Response.StatusCode
+    //    };
+
+    //    await context.Response.WriteAsJsonAsync(response);
+    //}
 }
