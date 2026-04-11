@@ -1,12 +1,14 @@
 ﻿using FluentValidation;
 using TaskManagement.Application.DTOs.QueryParameters;
 
-namespace TaskManagement.Application.Validators;
+namespace TaskManagement.Application.Validators.CategoryValidators;
 
-public class TodoQueryParametersDtoValidator : AbstractValidator<TodoQueryParametersDto>
+public class CategoryQueryParametersDtoValidator : AbstractValidator<CategoryQueryParametersDto>
 {
-    public TodoQueryParametersDtoValidator()
+    public CategoryQueryParametersDtoValidator()
     {
+
+
         RuleFor(x => x.PageNumber)
             .GreaterThan(0);
 
@@ -20,9 +22,8 @@ public class TodoQueryParametersDtoValidator : AbstractValidator<TodoQueryParame
 
         RuleFor(x => x.SortBy)
             .Must(x =>
-                x == "title" ||
-                x == "createdAt" ||
-                x == "dueDate")
+                x == "Name" ||
+                x == "createdAt")
             .When(x => !string.IsNullOrWhiteSpace(x.SortBy))
             .WithMessage("Invalid SortBy value.");
     }

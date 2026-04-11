@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
 
-namespace TaskManagement.Application.Validators;
+namespace TaskManagement.Application.Validators.TodoItemValidators;
 
-public class UpdateTodoItemDtoValidator : AbstractValidator<UpdateTodoItemDto>
+public class CreateTodoItemDtoValidator : AbstractValidator<CreateTodoItemDto>
 {
-    public UpdateTodoItemDtoValidator()
+    public CreateTodoItemDtoValidator()
     {
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title is required.")
@@ -18,12 +18,9 @@ public class UpdateTodoItemDtoValidator : AbstractValidator<UpdateTodoItemDto>
             .GreaterThan(DateTime.UtcNow)
             .WithMessage("Due date must be in the future.");
 
-        RuleFor(x => x.CompletionStatus)
-            .IsInEnum()
-            .WithMessage("Invalid status value.");
-
-        RuleFor(x => x.Priority)
-            .IsInEnum()
-            .WithMessage("Invalid Priority value.");
+        RuleFor(x => x.Priority).IsInEnum()
+            .WithMessage("Priority is required.");
+        RuleFor(x => x.CategoryId)
+            .NotEmpty().WithMessage("Category ID is required.");
     }
 }

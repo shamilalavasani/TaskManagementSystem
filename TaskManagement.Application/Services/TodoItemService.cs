@@ -11,13 +11,19 @@ namespace TaskManagement.Application.Services;
 public class TodoItemService : ITodoItemService
 {
     private readonly ITodoItemRepository _repository;
-    public TodoItemService(ITodoItemRepository repository)
+    private readonly ICategoryRepository _categoryRepository;
+
+    public TodoItemService(ITodoItemRepository repository, ICategoryRepository categoryRepository)
     {
         _repository = repository;
+        _categoryRepository = categoryRepository;
     }
 
     public async Task<TodoItemDto> CreateTodoItemAsync(CreateTodoItemDto createDto)
     {
+        var categoryExists = await _categoryRepository.ExistsAsync(createDto.CategoryId);
+        if (!categoryExists)
+            throw new ArgumentException("Invalid category ID.");
 
         var newItem = new TodoItem(
 
@@ -86,9 +92,14 @@ public class TodoItemService : ITodoItemService
 
     public async Task UpdateTodoItemAsync(Guid id, UpdateTodoItemDto updateDto)
     {
+
         var item = await _repository.GetByIdAsync(id);
         if (item is null)
             throw new KeyNotFoundException("Todo item not found.");
+
+        var categoryExists = await _categoryRepository.ExistsAsync(updateDto.CategoryId);
+        if (!categoryExists)
+            throw new ArgumentException("Invalid category ID.");
 
         item.UpdateDetails(
                 updateDto.Title,
@@ -124,7 +135,9 @@ public class TodoItemService : ITodoItemService
             CompletionStatus = item.CompletionStatus,
             CreatedAt = item.CreatedAt,
             DueDate = item.DueDate,
-            Priority = item.Priority
+            Priority = item.Priority,
+            CategoryId = item.CategoryId,
+            CategoryName = item.Category.Name
         };
     }
 

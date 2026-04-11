@@ -19,7 +19,7 @@ builder.Services.AddApiServices();
 
 // Swagger services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); // This requires Swashbuckle.AspNetCore NuGet package
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -37,5 +37,6 @@ app.UseHttpsRedirection();
 
 //Map endpoints
 app.MapTodoItemEndpoints();
+app.MapCategoryEndpoints();
 
 app.Run();

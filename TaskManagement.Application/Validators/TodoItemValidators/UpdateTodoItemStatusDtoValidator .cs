@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
 
-namespace TaskManagement.Application.Validators;
+namespace TaskManagement.Application.Validators.TodoItemValidators;
 
 public class UpdateTodoItemStatusDtoValidator : AbstractValidator<UpdateTodoItemStatusDto>
 {

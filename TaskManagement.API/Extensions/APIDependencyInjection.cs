@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using System.Text.Json.Serialization;
-using TaskManagement.Application.Validators;
+using TaskManagement.Application.Validators.CategoryValidators;
+using TaskManagement.Application.Validators.TodoItemValidators;
 namespace TaskManagement.API.Extensions;
 
 public static class ApiDependencyInjection
@@ -10,15 +11,16 @@ public static class ApiDependencyInjection
     {
         services.ConfigureHttpJsonOptions(options =>
         {
-            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());// baraye runtime api
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());// for runtime api
         });
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(options =>
         {
-            options.UseInlineDefinitionsForEnums(); // baraye test swagger
+            options.UseInlineDefinitionsForEnums(); // for  swagger test
         });
         services.AddValidatorsFromAssemblyContaining<CreateTodoItemDtoValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateCategoryDtoValidator>();
         return services;
     }
 }
