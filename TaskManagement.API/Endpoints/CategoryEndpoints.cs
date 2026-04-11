@@ -7,7 +7,7 @@ public static class CategoryEndpoints
 {
     public static void MapCategoryEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/category").WithTags("Categories");
+        var group = app.MapGroup("/categories").WithTags("Categories");
         group.MapGet("/", GetAllCategories).AddEndpointFilter<ValidationFilter<CategoryQueryParametersDto>>();
         group.MapGet("/{id:guid}", GetCategoryById);
         group.MapPost("/", CreateCategory).AddEndpointFilter<ValidationFilter<CreateCategoryDto>>();

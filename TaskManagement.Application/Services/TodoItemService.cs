@@ -137,7 +137,7 @@ public class TodoItemService : ITodoItemService
             DueDate = item.DueDate,
             Priority = item.Priority,
             CategoryId = item.CategoryId,
-            CategoryName = item.Category.Name
+            CategoryName = item.Category?.Name
         };
     }
 

@@ -33,7 +33,10 @@ public class TodoItemRepository : ITodoItemRepository
 
     public async Task<PagedResultDto<TodoItem>> GetAllAsync(TodoQueryParametersDto query)
     {
-        IQueryable<TodoItem> todoQuery = _context.TodoItems.AsNoTracking().AsQueryable();
+        IQueryable<TodoItem> todoQuery = _context.TodoItems
+            .Include(x => x.Category)
+            .AsNoTracking()
+            .AsQueryable();
 
         // Filtering by Status
         if (query.Status.HasValue)
@@ -93,7 +96,10 @@ public class TodoItemRepository : ITodoItemRepository
 
     public async Task<TodoItem?> GetByIdAsync(Guid id)
     {
-        return await _context.TodoItems.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        return await _context.TodoItems
+            .Include(x => x.Category)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
 
@@ -101,6 +107,8 @@ public class TodoItemRepository : ITodoItemRepository
     public async Task<IEnumerable<TodoItem>> GetDueInNext7DaysAsync()
     {
         return await _context.TodoItems
+             .Include(t => t.Category)
+             .AsNoTracking()
              .Where(t => t.DueDate > DateTime.UtcNow
                     && t.DueDate <= DateTime.UtcNow.AddDays(7)
                     && t.CompletionStatus != TodoItemStatus.Completed
@@ -111,10 +119,12 @@ public class TodoItemRepository : ITodoItemRepository
     public async Task<IEnumerable<TodoItem>> GetOverdueAsync()
     {
         return await _context.TodoItems
-          .Where(t => t.DueDate < DateTime.UtcNow
+            .Include(t => t.Category)
+            .AsNoTracking()
+            .Where(t => t.DueDate < DateTime.UtcNow
                  && t.CompletionStatus != TodoItemStatus.Completed
                  && t.CompletionStatus != TodoItemStatus.Cancelled)
-          .ToListAsync();
+            .ToListAsync();
     }
 
     public async Task UpdateAsync(TodoItem todoItem)
