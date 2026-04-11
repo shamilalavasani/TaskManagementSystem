@@ -1,6 +1,6 @@
 ﻿using TaskManagement.Application.DTOs.CategoryDTOs;
 using TaskManagement.Application.DTOs.CommonDTOs;
-using TaskManagement.Application.DTOs.QueryParameters;
+using TaskManagement.Application.DTOs.QueryParametersDTOs;
 
 namespace TaskManagement.Application.Interfaces;
 

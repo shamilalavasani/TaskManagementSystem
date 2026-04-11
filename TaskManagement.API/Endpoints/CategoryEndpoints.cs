@@ -1,6 +1,7 @@
 ﻿using TaskManagement.Application.DTOs.CategoryDTOs;
-using TaskManagement.Application.DTOs.QueryParameters;
+using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.Interfaces;
+
 namespace TaskManagement.API.Endpoints;
 
 public static class CategoryEndpoints

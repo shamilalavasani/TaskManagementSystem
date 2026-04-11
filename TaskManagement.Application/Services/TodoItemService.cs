@@ -1,10 +1,12 @@
 ﻿using TaskManagement.Application.DTOs.CommonDTOs;
-using TaskManagement.Application.DTOs.QueryParameters;
+
+using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
 using TaskManagement.Application.Interfaces;
 using TaskManagement.Application.Repositories;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Enums;
+
 
 namespace TaskManagement.Application.Services;
 
@@ -23,7 +25,7 @@ public class TodoItemService : ITodoItemService
     {
         var categoryExists = await _categoryRepository.ExistsAsync(createDto.CategoryId);
         if (!categoryExists)
-            throw new ArgumentException("Invalid category ID.");
+            throw new KeyNotFoundException("Category not found.");
 
         var newItem = new TodoItem(
 
@@ -31,11 +33,15 @@ public class TodoItemService : ITodoItemService
        createDto.Description,
        createDto.DueDate,
        createDto.CategoryId,
-       createDto.Priority
-   );
+       createDto.Priority);
 
         var createdItem = await _repository.AddAsync(newItem);
-        return MapToDto(createdItem);
+
+        var createdItemWithCategory = await _repository.GetByIdAsync(createdItem.Id);// to fill categoryname 
+        if (createdItemWithCategory is null)
+            throw new KeyNotFoundException("Created todo item could not be found.");
+
+        return MapToDto(createdItemWithCategory);
 
 
     }
@@ -99,7 +105,7 @@ public class TodoItemService : ITodoItemService
 
         var categoryExists = await _categoryRepository.ExistsAsync(updateDto.CategoryId);
         if (!categoryExists)
-            throw new ArgumentException("Invalid category ID.");
+            throw new KeyNotFoundException("Category not found.");
 
         item.UpdateDetails(
                 updateDto.Title,

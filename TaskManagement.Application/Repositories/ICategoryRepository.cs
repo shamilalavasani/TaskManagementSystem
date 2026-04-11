@@ -1,7 +1,6 @@
 ﻿using TaskManagement.Application.DTOs.CommonDTOs;
-using TaskManagement.Application.DTOs.QueryParameters;
+using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Domain.Entities;
-
 namespace TaskManagement.Application.Repositories;
 
 public interface ICategoryRepository

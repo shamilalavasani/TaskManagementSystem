@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskManagement.Application.DTOs.CommonDTOs;
-using TaskManagement.Application.DTOs.QueryParameters;
+using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.Repositories;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Enums;
-
 using TaskManagement.Infrastructure.Persistence.Context;
 
 namespace TaskManagement.Infrastructure.Repositories;

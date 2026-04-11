@@ -10,12 +10,12 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     public AppDbContext CreateDbContext(string[] args)
     {
         var currentDirectory = Directory.GetCurrentDirectory();
-        var apiProjectPath = Path.Combine(currentDirectory, "../TaskManagement.API");
+        var apiProjectPath = Path.Combine(currentDirectory, "../TaskManagement.API");// to find appsettings.json in API project
 
         var configuration = new ConfigurationBuilder()
             .SetBasePath(apiProjectPath)
             .AddJsonFile("appsettings.json", optional: false)
-            .Build();
+            .Build(); // tofind connection string in appsettings.json
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
@@ -23,7 +23,8 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
             throw new InvalidOperationException("Connection string 'DefaultConnection' was not found.");
 
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        optionsBuilder.UseSqlServer(connectionString);
+
+        optionsBuilder.UseSqlServer(connectionString, b => b.MigrationsAssembly("TaskManagement.Infrastructure"));
 
         return new AppDbContext(optionsBuilder.Options);
     }

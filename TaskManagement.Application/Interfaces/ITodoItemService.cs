@@ -1,8 +1,7 @@
 ﻿using TaskManagement.Application.DTOs.CommonDTOs;
-using TaskManagement.Application.DTOs.QueryParameters;
+using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
 using TaskManagement.Domain.Enums;
-
 namespace TaskManagement.Application.Interfaces;
 
 public interface ITodoItemService

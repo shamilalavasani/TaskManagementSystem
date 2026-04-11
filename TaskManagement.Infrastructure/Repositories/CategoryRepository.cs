@@ -1,19 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskManagement.Application.DTOs.CommonDTOs;
-using TaskManagement.Application.DTOs.QueryParameters;
+using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.Repositories;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Infrastructure.Persistence.Context;
 
+
 namespace TaskManagement.Infrastructure.Repositories;
 
-public class CategoryRepository : ICategoryRepository
+public class CategoryRepository(AppDbContext context) : ICategoryRepository
 {
-    private readonly AppDbContext _context;
-    public CategoryRepository(AppDbContext context)
-    {
-        _context = context;
-    }
+    private readonly AppDbContext _context = context;
+
     public async Task<Category> AddAsync(Category category)
     {
         await _context.Categories.AddAsync(category);

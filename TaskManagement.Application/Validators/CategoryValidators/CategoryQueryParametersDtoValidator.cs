@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using TaskManagement.Application.DTOs.QueryParameters;
+using TaskManagement.Application.DTOs.QueryParametersDTOs;
 
 namespace TaskManagement.Application.Validators.CategoryValidators;
 
