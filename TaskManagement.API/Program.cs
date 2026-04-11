@@ -37,6 +37,9 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Seed roles
+await app.SeedRolesAsync();
+
 //Map endpoints
 app.MapAuthEndpoints();
 app.MapTodoItemEndpoints();
