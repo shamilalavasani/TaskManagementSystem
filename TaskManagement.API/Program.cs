@@ -16,6 +16,7 @@ builder.Host.UseSerilog((context, services, configuration) =>
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApiServices();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 // Swagger services
 builder.Services.AddEndpointsApiExplorer();
@@ -33,7 +34,8 @@ if (app.Environment.IsDevelopment())
 app.UseGlobalExceptionHandling();
 app.UseRequestResponseLogging();
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
+app.UseAuthorization();
 
 //Map endpoints
 app.MapTodoItemEndpoints();
