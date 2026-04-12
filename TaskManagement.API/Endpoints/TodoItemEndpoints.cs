@@ -1,4 +1,5 @@
-﻿using TaskManagement.Application.DTOs.QueryParametersDTOs;
+﻿using TaskManagement.Application.Common.Security;
+using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
 using TaskManagement.Application.Interfaces;
 namespace TaskManagement.API.Endpoints;
@@ -7,12 +8,12 @@ public static class TodoItemEndpoints
 {
     public static void MapTodoItemEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/todos").WithTags("TodoItems").RequireAuthorization();
-        group.MapGet("/", GetAllTodoItems).AddEndpointFilter<ValidationFilter<TodoQueryParametersDto>>();
+        var group = app.MapGroup("/todos").WithTags("TodoItems").RequireAuthorization(AppPolicies.UserOrAbove);
+        group.MapGet("/", GetAllTodoItems).AddEndpointFilter<ValidationFilter<TodoQueryParametersDto>>().RequireAuthorization(AppPolicies.CanViewAllTodos);
         group.MapGet("/{id:guid}", GetTodoItemById);
         group.MapPost("/", CreateTodoItem).AddEndpointFilter<ValidationFilter<CreateTodoItemDto>>();
         group.MapPut("/{id:guid}", UpdateTodoItem).AddEndpointFilter<ValidationFilter<UpdateTodoItemDto>>();
-        group.MapDelete("/{id:guid}", DeleteTodoItem);
+        group.MapDelete("/{id:guid}", DeleteTodoItem).RequireAuthorization(AppPolicies.AdminOnly);
         group.MapGet("/overdue", GetOverdueTodoItems);
         group.MapGet("/due-next-7-days", GetTodoItemsDueInNext7Days);
         group.MapPatch("/{id:guid}/status", UpdateStatusTodoItem).AddEndpointFilter<ValidationFilter<UpdateTodoItemStatusDto>>();

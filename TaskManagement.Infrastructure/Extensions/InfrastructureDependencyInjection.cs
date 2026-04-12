@@ -29,6 +29,7 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 
+
         return services;
     }
 }

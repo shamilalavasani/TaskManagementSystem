@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using TaskManagement.Application.Common.Security;
 using TaskManagement.Application.DTOs.AuthDTOs;
 using TaskManagement.Application.Interfaces;
 
@@ -40,7 +41,13 @@ public class AuthService : IAuthService
             throw new ArgumentException(errors);
         }
 
-        await _userManager.AddToRoleAsync(user, "User");
+        var addToRoleResult = await _userManager.AddToRoleAsync(user, AppRoles.User);
+
+        if (!addToRoleResult.Succeeded)
+        {
+            var errors = string.Join(", ", addToRoleResult.Errors.Select(e => e.Description));
+            throw new Exception($"Failed to assign default role: {errors}");
+        }
 
         var roles = await _userManager.GetRolesAsync(user);// add role to token claims
         var token = _jwtTokenService.GenerateToken(user.Id, user.Email!, roles);

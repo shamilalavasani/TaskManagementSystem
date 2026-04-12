@@ -1,4 +1,5 @@
-﻿using TaskManagement.Application.DTOs.CategoryDTOs;
+﻿using TaskManagement.Application.Common.Security;
+using TaskManagement.Application.DTOs.CategoryDTOs;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.Interfaces;
 
@@ -8,12 +9,12 @@ public static class CategoryEndpoints
 {
     public static void MapCategoryEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/categories").WithTags("Categories");
+        var group = app.MapGroup("/categories").WithTags("Categories").RequireAuthorization(AppPolicies.UserOrAbove);
         group.MapGet("/", GetAllCategories).AddEndpointFilter<ValidationFilter<CategoryQueryParametersDto>>();
         group.MapGet("/{id:guid}", GetCategoryById);
-        group.MapPost("/", CreateCategory).AddEndpointFilter<ValidationFilter<CreateCategoryDto>>();
-        group.MapPut("/{id:guid}", UpdateCategory).AddEndpointFilter<ValidationFilter<UpdateCategoryDto>>();
-        group.MapDelete("/{id:guid}", DeleteCategory);
+        group.MapPost("/", CreateCategory).AddEndpointFilter<ValidationFilter<CreateCategoryDto>>().RequireAuthorization(AppPolicies.CanManageCategories);
+        group.MapPut("/{id:guid}", UpdateCategory).AddEndpointFilter<ValidationFilter<UpdateCategoryDto>>().RequireAuthorization(AppPolicies.CanManageCategories);
+        group.MapDelete("/{id:guid}", DeleteCategory).RequireAuthorization(AppPolicies.CanDeleteCategories);
 
     }
 
