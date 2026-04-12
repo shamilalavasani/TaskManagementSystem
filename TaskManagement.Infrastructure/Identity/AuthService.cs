@@ -40,7 +40,7 @@ public class AuthService : IAuthService
             throw new ArgumentException(errors);
         }
 
-        //await _userManager.AddToRoleAsync(user, "User");
+        await _userManager.AddToRoleAsync(user, "User");
 
         var roles = await _userManager.GetRolesAsync(user);// add role to token claims
         var token = _jwtTokenService.GenerateToken(user.Id, user.Email!, roles);

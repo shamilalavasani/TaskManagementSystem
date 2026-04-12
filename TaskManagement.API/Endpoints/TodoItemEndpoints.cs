@@ -7,7 +7,7 @@ public static class TodoItemEndpoints
 {
     public static void MapTodoItemEndpoints(this WebApplication app)
     {
-        var group = app.MapGroup("/todos").WithTags("TodoItems");
+        var group = app.MapGroup("/todos").WithTags("TodoItems").RequireAuthorization();
         group.MapGet("/", GetAllTodoItems).AddEndpointFilter<ValidationFilter<TodoQueryParametersDto>>();
         group.MapGet("/{id:guid}", GetTodoItemById);
         group.MapPost("/", CreateTodoItem).AddEndpointFilter<ValidationFilter<CreateTodoItemDto>>();
