@@ -21,9 +21,7 @@ builder.Services.AddApiServices();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddApiAuthorization();
 
-// Swagger services
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
