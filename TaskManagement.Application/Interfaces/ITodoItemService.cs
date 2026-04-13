@@ -7,7 +7,7 @@ namespace TaskManagement.Application.Interfaces;
 public interface ITodoItemService
 {
 
-    Task<TodoItemDto> CreateTodoItemAsync(CreateTodoItemDto createDto);
+    Task<TodoItemDto> CreateTodoItemAsync(CreateTodoItemDto createDto, string ownerUserId);
     Task<TodoItemDto> GetTodoItemByIdAsync(Guid id);
     Task<PagedResultDto<TodoItemDto>> GetAllTodoItemsAsync(TodoQueryParametersDto query);
     Task UpdateTodoItemAsync(Guid id, UpdateTodoItemDto updateDto);

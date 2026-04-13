@@ -1,4 +1,5 @@
-﻿using TaskManagement.Application.Common.Security;
+﻿using System.Security.Claims;
+using TaskManagement.Application.Common.Security;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
 using TaskManagement.Application.Interfaces;
@@ -32,9 +33,14 @@ public static class TodoItemEndpoints
         return Results.Ok(item);
     }
 
-    private static async Task<IResult> CreateTodoItem(CreateTodoItemDto dto, ITodoItemService service)
+    private static async Task<IResult> CreateTodoItem(CreateTodoItemDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
-        var createdItem = await service.CreateTodoItemAsync(dto);
+        Console.WriteLine("CreateTodoItem endpoint hit");
+        var ownerUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(ownerUserId))
+            return Results.Unauthorized();
+        var createdItem = await service.CreateTodoItemAsync(dto, ownerUserId);
         return Results.Created($"/todos/{createdItem.Id}", createdItem);
     }
 

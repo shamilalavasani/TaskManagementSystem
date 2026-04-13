@@ -8,7 +8,7 @@ public class TodoItem
     public Guid Id { get; private set; }
     public string Title { get; private set; }
     public string Description { get; private set; }
-    // public int? CreatedByUserId { get; private set; }
+    public string OwnerUserId { get; private set; } = string.Empty;
     public TodoItemStatus CompletionStatus { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime DueDate { get; private set; }
@@ -18,9 +18,11 @@ public class TodoItem
 
     private TodoItem() { }// for EF Core
 
-    public TodoItem(string title, string description, DateTime dueDate, Guid categoryId, TodoPriority priority = TodoPriority.Medium)
+    public TodoItem(string title, string description, DateTime dueDate, Guid categoryId, string ownerUserId, TodoPriority priority = TodoPriority.Medium)
     {
         ValidateInputs(title, description, dueDate, categoryId);
+        if (string.IsNullOrWhiteSpace(ownerUserId))
+            throw new ArgumentException("ownerUserId can not be empty.", nameof(ownerUserId));
 
         Id = Guid.NewGuid();
 
@@ -31,7 +33,7 @@ public class TodoItem
         this.DueDate = dueDate;
         this.Priority = priority;
         this.CategoryId = categoryId;
-
+        this.OwnerUserId = ownerUserId;
 
 
     }
@@ -51,8 +53,7 @@ public class TodoItem
             throw new ArgumentException("Due date must be in the future.", nameof(dueDate));
 
 
-        //if (createdByUserId <= 0)
-        //    throw new ArgumentException("CreatedByUserId must be a positive integer.", nameof(createdByUserId));
+
 
         if (categoryId == Guid.Empty)
             throw new ArgumentException("CategoryId must be a valid GUID.", nameof(categoryId));

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using TaskManagement.Application.Validators.TodoItemValidators;
 
@@ -18,6 +19,34 @@ public static class ApiDependencyInjection
         services.AddSwaggerGen(options =>
         {
             options.UseInlineDefinitionsForEnums();
+            // 🔐 تعریف Bearer
+            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Enter 'Bearer' [space] and then your token"
+            });
+
+            // 🔐 اعمال به همه endpointها
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+     {
+
+
+         {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+             },
+            new string[] {}
+             }
+          });
         });
 
         services.AddValidatorsFromAssemblyContaining<CreateTodoItemDtoValidator>();

@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Identity;
+
 using Serilog;
 using TaskManagement.API.Endpoints;
 using TaskManagement.API.Extensions;
 using TaskManagement.Application.Extensions;
 using TaskManagement.Infrastructure.Extensions;
-using TaskManagement.Infrastructure.Identity;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,10 +45,7 @@ await app.SeedRolesAsync();
 app.MapAuthEndpoints();
 app.MapTodoItemEndpoints();
 app.MapCategoryEndpoints();
-//seeder
-using (var scope = app.Services.CreateScope())
-{
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    await RoleSeeder.SeedRolesAsync(roleManager);
-}
+
+
+
 app.Run();

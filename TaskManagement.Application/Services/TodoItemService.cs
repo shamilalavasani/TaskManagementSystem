@@ -21,7 +21,7 @@ public class TodoItemService : ITodoItemService
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<TodoItemDto> CreateTodoItemAsync(CreateTodoItemDto createDto)
+    public async Task<TodoItemDto> CreateTodoItemAsync(CreateTodoItemDto createDto, string ownerUserId)
     {
         var categoryExists = await _categoryRepository.ExistsAsync(createDto.CategoryId);
         if (!categoryExists)
@@ -33,6 +33,7 @@ public class TodoItemService : ITodoItemService
        createDto.Description,
        createDto.DueDate,
        createDto.CategoryId,
+    ownerUserId,
        createDto.Priority);
 
         var createdItem = await _repository.AddAsync(newItem);
