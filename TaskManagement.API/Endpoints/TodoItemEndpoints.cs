@@ -10,7 +10,7 @@ public static class TodoItemEndpoints
     public static void MapTodoItemEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/todos").WithTags("TodoItems").RequireAuthorization(AppPolicies.UserOrAbove);
-        group.MapGet("/", GetAllTodoItems).AddEndpointFilter<ValidationFilter<TodoQueryParametersDto>>().RequireAuthorization(AppPolicies.CanViewAllTodos);
+        group.MapGet("/", GetAllTodoItems).AddEndpointFilter<ValidationFilter<TodoQueryParametersDto>>();
         group.MapGet("/{id:guid}", GetTodoItemById);
         group.MapPost("/", CreateTodoItem).AddEndpointFilter<ValidationFilter<CreateTodoItemDto>>();
         group.MapPut("/{id:guid}", UpdateTodoItem).AddEndpointFilter<ValidationFilter<UpdateTodoItemDto>>();
@@ -19,23 +19,39 @@ public static class TodoItemEndpoints
         group.MapGet("/due-next-7-days", GetTodoItemsDueInNext7Days);
         group.MapPatch("/{id:guid}/status", UpdateStatusTodoItem).AddEndpointFilter<ValidationFilter<UpdateTodoItemStatusDto>>();
     }
-    private static async Task<IResult> GetAllTodoItems([AsParameters] TodoQueryParametersDto query, ITodoItemService service)
+    private static async Task<IResult> GetAllTodoItems([AsParameters] TodoQueryParametersDto query, ITodoItemService service, ClaimsPrincipal user)
     {
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var items = await service.GetAllTodoItemsAsync(query);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Results.Unauthorized();
+
+        var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value);
+
+        var isAdminOrManager = roles.Contains("Admin") || roles.Contains("Manager");
+
+        var items = await service.GetAllTodoItemsAsync(query, userId, isAdminOrManager);
         return Results.Ok(items);
     }
 
-    private static async Task<IResult> GetTodoItemById(Guid id, ITodoItemService service)
+    private static async Task<IResult> GetTodoItemById(Guid id, ITodoItemService service, ClaimsPrincipal user)
     {
-        var item = await service.GetTodoItemByIdAsync(id);
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(userId))
+            return Results.Unauthorized();
+
+        var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value);
+
+        var isAdminOrManager = roles.Contains("Admin") || roles.Contains("Manager");
+        var item = await service.GetTodoItemByIdAsync(id, userId, isAdminOrManager);
 
         return Results.Ok(item);
     }
 
     private static async Task<IResult> CreateTodoItem(CreateTodoItemDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
-        Console.WriteLine("CreateTodoItem endpoint hit");
+
         var ownerUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrWhiteSpace(ownerUserId))
@@ -44,17 +60,29 @@ public static class TodoItemEndpoints
         return Results.Created($"/todos/{createdItem.Id}", createdItem);
     }
 
-    private static async Task<IResult> UpdateTodoItem(Guid id, UpdateTodoItemDto dto, ITodoItemService service)
+    private static async Task<IResult> UpdateTodoItem(Guid id, UpdateTodoItemDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Results.Unauthorized();
 
-        await service.UpdateTodoItemAsync(id, dto);
+        var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value);
+        var isAdminOrManager = roles.Contains("Admin") || roles.Contains("Manager");
+
+        await service.UpdateTodoItemAsync(id, dto, userId, isAdminOrManager);
         return Results.NoContent();
     }
-    private static async Task<IResult> UpdateStatusTodoItem(Guid id, UpdateTodoItemStatusDto dto, ITodoItemService service)
+    private static async Task<IResult> UpdateStatusTodoItem(Guid id, UpdateTodoItemStatusDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
+        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Results.Unauthorized();
+
+        var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value);
+        var isAdminOrManager = roles.Contains("Admin") || roles.Contains("Manager");
 
 
-        await service.UpdateStatusTodoItemAsync(id, dto.Status);
+        await service.UpdateStatusTodoItemAsync(id, dto.Status, userId, isAdminOrManager);
         return Results.NoContent();
 
     }

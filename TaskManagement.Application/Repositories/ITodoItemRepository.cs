@@ -12,4 +12,5 @@ public interface ITodoItemRepository
     Task DeleteAsync(TodoItem todoItem);
     Task<IEnumerable<TodoItem>> GetOverdueAsync();
     Task<IEnumerable<TodoItem>> GetDueInNext7DaysAsync();
+    Task<PagedResultDto<TodoItem>> GetAllByOwnerAsync(TodoQueryParametersDto query, string ownerUserId);
 }
