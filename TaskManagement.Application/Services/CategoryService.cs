@@ -1,4 +1,5 @@
-﻿using TaskManagement.Application.DTOs.CategoryDTOs;
+﻿using TaskManagement.Application.Common.Exceptions;
+using TaskManagement.Application.DTOs.CategoryDTOs;
 using TaskManagement.Application.DTOs.CommonDTOs;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.Interfaces;
@@ -35,7 +36,7 @@ public class CategoryService : ICategoryService
         var category = await _repository.GetByIdAsync(id);
 
         if (category is null)
-            throw new KeyNotFoundException("Category not found.");
+            throw new NotFoundException("Category not found.");
         await _repository.DeleteAsync(category);
     }
 
@@ -56,7 +57,7 @@ public class CategoryService : ICategoryService
     {
         var item = await _repository.GetByIdAsync(id);
         if (item is null)
-            throw new KeyNotFoundException("Category not found.");
+            throw new NotFoundException("Category not found.");
 
         return MapToDto(item);
     }
@@ -65,7 +66,7 @@ public class CategoryService : ICategoryService
     {
         var item = await _repository.GetByIdAsync(id);
         if (item is null)
-            throw new KeyNotFoundException("Category not found.");
+            throw new NotFoundException("Category not found.");
         var existingCategory = await _repository.ExistsByNameAsync(updateDto.Name, id);
         if (existingCategory)
             throw new ArgumentException("Category with the same name already exists.");
