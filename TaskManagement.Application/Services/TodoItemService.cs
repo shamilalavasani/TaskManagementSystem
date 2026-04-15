@@ -1,5 +1,5 @@
-﻿using TaskManagement.Application.DTOs.CommonDTOs;
-
+﻿using TaskManagement.Application.Common.Exceptions;
+using TaskManagement.Application.DTOs.CommonDTOs;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
 using TaskManagement.Application.Interfaces;
@@ -7,25 +7,21 @@ using TaskManagement.Application.Repositories;
 using TaskManagement.Domain.Entities;
 using TaskManagement.Domain.Enums;
 
-
 namespace TaskManagement.Application.Services;
-
 public class TodoItemService : ITodoItemService
 {
     private readonly ITodoItemRepository _repository;
     private readonly ICategoryRepository _categoryRepository;
-
     public TodoItemService(ITodoItemRepository repository, ICategoryRepository categoryRepository)
     {
         _repository = repository;
         _categoryRepository = categoryRepository;
     }
-
     public async Task<TodoItemDto> CreateTodoItemAsync(CreateTodoItemDto createDto, string ownerUserId)
     {
         var categoryExists = await _categoryRepository.ExistsAsync(createDto.CategoryId);
         if (!categoryExists)
-            throw new KeyNotFoundException("Category not found.");
+            throw new NotFoundException("Category not found.");
 
         var newItem = new TodoItem(
 
@@ -40,24 +36,17 @@ public class TodoItemService : ITodoItemService
 
         var createdItemWithCategory = await _repository.GetByIdAsync(createdItem.Id);// to fill categoryname 
         if (createdItemWithCategory is null)
-            throw new KeyNotFoundException("Created todo item could not be found.");
+            throw new NotFoundException("Created todo item could not be found.");
 
         return MapToDto(createdItemWithCategory);
 
 
     }
-
-    public async Task DeleteTodoItemAsync(Guid id)
+    public async Task DeleteTodoItemAsync(Guid id, string userId, bool isAdminOrManager)
     {
-        var deletedItem = await _repository.GetByIdAsync(id);
-
-        if (deletedItem is null)
-            throw new KeyNotFoundException("Todo item not found.");
+        var deletedItem = await GetOwnedTodoOrThrowAsync(id, userId, isAdminOrManager);
         await _repository.DeleteAsync(deletedItem);
-
-
     }
-
     public async Task<PagedResultDto<TodoItemDto>> GetAllTodoItemsAsync(TodoQueryParametersDto query, string userId, bool isAdminOrManager)
     {
         PagedResultDto<TodoItem> pagedItems;
@@ -79,50 +68,28 @@ public class TodoItemService : ITodoItemService
         };
 
     }
-
-
-
     public async Task<IEnumerable<TodoItemDto>> GetOverdueTodoItemsAsync()
     {
         var items = await _repository.GetOverdueAsync();
         return items.Select(MapToDto);
     }
-
-
-
     public async Task<TodoItemDto> GetTodoItemByIdAsync(Guid id, string userId, bool isAdminOrManager)
-
     {
-
-        var item = await _repository.GetByIdAsync(id);
-        if (item is null)
-            throw new KeyNotFoundException("Todo item not found.");
-        if (!isAdminOrManager && item.OwnerUserId != userId)
-            throw new UnauthorizedAccessException("You do not have access to this todo");
+        var item = await GetOwnedTodoOrThrowAsync(id, userId, isAdminOrManager);
         return MapToDto(item);
     }
-
     public async Task<IEnumerable<TodoItemDto>> GetTodoItemsDueInNext7DaysAsync()
     {
         var items = await _repository.GetDueInNext7DaysAsync();
         return items.Select(MapToDto);
     }
-
     public async Task UpdateTodoItemAsync(Guid id, UpdateTodoItemDto updateDto, string userId, bool isAdminOrManager)
     {
-
-        var item = await _repository.GetByIdAsync(id);
-        if (item is null)
-            throw new KeyNotFoundException("Todo item not found.");
-        //  Ownership check
-        if (!isAdminOrManager && item.OwnerUserId != userId)
-            throw new UnauthorizedAccessException("You do not have access to update this todo.");
-
+        var item = await GetOwnedTodoOrThrowAsync(id, userId, isAdminOrManager);
 
         var categoryExists = await _categoryRepository.ExistsAsync(updateDto.CategoryId);
         if (!categoryExists)
-            throw new KeyNotFoundException("Category not found.");
-
+            throw new NotFoundException("Category not found.");
         item.UpdateDetails(
                 updateDto.Title,
                 updateDto.Description,
@@ -133,21 +100,12 @@ public class TodoItemService : ITodoItemService
             );
         item.ChangeStatus(updateDto.CompletionStatus);
         await _repository.UpdateAsync(item);
-
     }
-
-
     public async Task UpdateStatusTodoItemAsync(Guid id, TodoItemStatus updateStatus, string userId, bool isAdminOrManager)
     {
-        var item = await _repository.GetByIdAsync(id);
-        if (item is null)
-            throw new KeyNotFoundException("Todo item not found.");
-        //  Ownership check
-        if (!isAdminOrManager && item.OwnerUserId != userId)
-            throw new UnauthorizedAccessException("You do not have access to update this todo.");
+        var item = await GetOwnedTodoOrThrowAsync(id, userId, isAdminOrManager);
         item.ChangeStatus(updateStatus);
         await _repository.UpdateAsync(item);
-
     }
     private static TodoItemDto MapToDto(TodoItem item)
     {
@@ -163,6 +121,17 @@ public class TodoItemService : ITodoItemService
             CategoryId = item.CategoryId,
             CategoryName = item.Category?.Name
         };
+    }
+    private async Task<TodoItem> GetOwnedTodoOrThrowAsync(Guid todoId, string currentUserId, bool isAdminOrManager)
+    {
+        var todo = await _repository.GetByIdAsync(todoId);
+        if (todo is null)
+            throw new NotFoundException("Todo item not found.");
+
+        if (!isAdminOrManager && todo.OwnerUserId != currentUserId)
+            throw new ForbiddenException("You do not have access to this todo item.");
+
+        return todo;
     }
 
 }

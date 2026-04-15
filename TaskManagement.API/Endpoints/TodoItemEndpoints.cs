@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using TaskManagement.API.Extensions;
 using TaskManagement.Application.Common.Security;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
@@ -14,21 +15,18 @@ public static class TodoItemEndpoints
         group.MapGet("/{id:guid}", GetTodoItemById);
         group.MapPost("/", CreateTodoItem).AddEndpointFilter<ValidationFilter<CreateTodoItemDto>>();
         group.MapPut("/{id:guid}", UpdateTodoItem).AddEndpointFilter<ValidationFilter<UpdateTodoItemDto>>();
-        group.MapDelete("/{id:guid}", DeleteTodoItem).RequireAuthorization(AppPolicies.AdminOnly);
+        group.MapDelete("/{id:guid}", DeleteTodoItem);
         group.MapGet("/overdue", GetOverdueTodoItems);
         group.MapGet("/due-next-7-days", GetTodoItemsDueInNext7Days);
         group.MapPatch("/{id:guid}/status", UpdateStatusTodoItem).AddEndpointFilter<ValidationFilter<UpdateTodoItemStatusDto>>();
     }
     private static async Task<IResult> GetAllTodoItems([AsParameters] TodoQueryParametersDto query, ITodoItemService service, ClaimsPrincipal user)
     {
-        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (string.IsNullOrWhiteSpace(userId))
+        var userContext = user.GetUserContext();
+        if (userContext is null)
             return Results.Unauthorized();
 
-        var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value);
-
-        var isAdminOrManager = roles.Contains("Admin") || roles.Contains("Manager");
+        var (userId, isAdminOrManager) = userContext.Value;
 
         var items = await service.GetAllTodoItemsAsync(query, userId, isAdminOrManager);
         return Results.Ok(items);
@@ -36,14 +34,11 @@ public static class TodoItemEndpoints
 
     private static async Task<IResult> GetTodoItemById(Guid id, ITodoItemService service, ClaimsPrincipal user)
     {
-        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (string.IsNullOrWhiteSpace(userId))
+        var userContext = user.GetUserContext();
+        if (userContext is null)
             return Results.Unauthorized();
 
-        var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value);
-
-        var isAdminOrManager = roles.Contains("Admin") || roles.Contains("Manager");
+        var (userId, isAdminOrManager) = userContext.Value;
         var item = await service.GetTodoItemByIdAsync(id, userId, isAdminOrManager);
 
         return Results.Ok(item);
@@ -51,44 +46,48 @@ public static class TodoItemEndpoints
 
     private static async Task<IResult> CreateTodoItem(CreateTodoItemDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
-
-        var ownerUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (string.IsNullOrWhiteSpace(ownerUserId))
+        var userContext = user.GetUserContext();
+        if (userContext is null)
             return Results.Unauthorized();
-        var createdItem = await service.CreateTodoItemAsync(dto, ownerUserId);
+
+        var (userId, _) = userContext.Value;
+        var createdItem = await service.CreateTodoItemAsync(dto, userId);
         return Results.Created($"/todos/{createdItem.Id}", createdItem);
     }
 
     private static async Task<IResult> UpdateTodoItem(Guid id, UpdateTodoItemDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
-        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
+        var userContext = user.GetUserContext();
+        if (userContext is null)
             return Results.Unauthorized();
 
-        var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value);
-        var isAdminOrManager = roles.Contains("Admin") || roles.Contains("Manager");
+        var (userId, isAdminOrManager) = userContext.Value;
 
         await service.UpdateTodoItemAsync(id, dto, userId, isAdminOrManager);
         return Results.NoContent();
     }
     private static async Task<IResult> UpdateStatusTodoItem(Guid id, UpdateTodoItemStatusDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
-        var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
+        var userContext = user.GetUserContext();
+        if (userContext is null)
             return Results.Unauthorized();
 
-        var roles = user.FindAll(ClaimTypes.Role).Select(r => r.Value);
-        var isAdminOrManager = roles.Contains("Admin") || roles.Contains("Manager");
+        var (userId, isAdminOrManager) = userContext.Value;
 
 
         await service.UpdateStatusTodoItemAsync(id, dto.Status, userId, isAdminOrManager);
         return Results.NoContent();
 
     }
-    private static async Task<IResult> DeleteTodoItem(Guid id, ITodoItemService service)
+    private static async Task<IResult> DeleteTodoItem(Guid id, ITodoItemService service, ClaimsPrincipal user)
     {
-        await service.DeleteTodoItemAsync(id);
+        var userContext = user.GetUserContext();
+        if (userContext is null)
+            return Results.Unauthorized();
+
+        var (userId, isAdminOrManager) = userContext.Value;
+
+        await service.DeleteTodoItemAsync(id, userId, isAdminOrManager);
         return Results.NoContent();
     }
     private static async Task<IResult> GetOverdueTodoItems(ITodoItemService service)

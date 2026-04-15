@@ -12,7 +12,7 @@ public interface ITodoItemService
     Task<PagedResultDto<TodoItemDto>> GetAllTodoItemsAsync(TodoQueryParametersDto query, string userId, bool isAdminOrManager);
     Task UpdateTodoItemAsync(Guid id, UpdateTodoItemDto updateDto, string userId, bool isAdminOrManager);
     Task UpdateStatusTodoItemAsync(Guid id, TodoItemStatus updateStatus, string userId, bool isAdminOrManager);
-    Task DeleteTodoItemAsync(Guid id);
+    Task DeleteTodoItemAsync(Guid id, string userId, bool isAdminOrManager);
     Task<IEnumerable<TodoItemDto>> GetOverdueTodoItemsAsync();
 
     Task<IEnumerable<TodoItemDto>> GetTodoItemsDueInNext7DaysAsync();

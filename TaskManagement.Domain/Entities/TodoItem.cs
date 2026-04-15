@@ -4,7 +4,6 @@ namespace TaskManagement.Domain.Entities;
 
 public class TodoItem
 {
-
     public Guid Id { get; private set; }
     public string Title { get; private set; }
     public string Description { get; private set; }
@@ -37,6 +36,7 @@ public class TodoItem
 
 
     }
+
     private void ValidateInputs(string title, string description, DateTime dueDate, Guid categoryId)
     {
 
@@ -59,7 +59,6 @@ public class TodoItem
             throw new ArgumentException("CategoryId must be a valid GUID.", nameof(categoryId));
 
     }
-
     public void UpdateDetails(string title, string description, DateTime dueDate, Guid categoryId, TodoPriority priority)
     {
 
@@ -72,7 +71,6 @@ public class TodoItem
         Priority = priority;
 
     }
-
     public void ChangeStatus(TodoItemStatus newStatus)
     {
         if (CompletionStatus == newStatus)

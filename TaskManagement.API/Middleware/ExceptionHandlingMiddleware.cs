@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using TaskManagement.API.Common;
+using TaskManagement.Application.Common.Exceptions;
+
 
 namespace TaskManagement.API.Middleware;
 
@@ -29,6 +31,9 @@ public class ExceptionHandlingMiddleware
 
         var statusCode = exception switch
         {
+            NotFoundException => HttpStatusCode.NotFound,
+            ForbiddenException => HttpStatusCode.Forbidden,
+            BadRequestException => HttpStatusCode.BadRequest,
             KeyNotFoundException => HttpStatusCode.NotFound,
             ArgumentException => HttpStatusCode.BadRequest,
             _ => HttpStatusCode.InternalServerError
