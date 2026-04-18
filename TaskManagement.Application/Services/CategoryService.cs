@@ -20,7 +20,7 @@ public class CategoryService : ICategoryService
     {
         var existingCategory = await _repository.ExistsByNameAsync(createDto.Name);
         if (existingCategory)
-            throw new ArgumentException("Category with the same name already exists.");
+            throw new BadRequestException("Category with the same name already exists.");
 
         var category = new Category(
        createDto.Name,
@@ -69,7 +69,7 @@ public class CategoryService : ICategoryService
             throw new NotFoundException("Category not found.");
         var existingCategory = await _repository.ExistsByNameAsync(updateDto.Name, id);
         if (existingCategory)
-            throw new ArgumentException("Category with the same name already exists.");
+            throw new BadRequestException("Category with the same name already exists.");
 
         item.Update(
                 updateDto.Name,

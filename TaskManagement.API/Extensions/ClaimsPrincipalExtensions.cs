@@ -5,7 +5,8 @@ namespace TaskManagement.API.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
-    public static (string userId, bool isAdminOrManager)? GetUserContext(this ClaimsPrincipal user)
+
+    public static UserContext? GetUserContext(this ClaimsPrincipal user)
     {
         var userId = user.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -13,6 +14,6 @@ public static class ClaimsPrincipalExtensions
             return null;
 
         var isAdminOrManager = user.IsInRole("Admin") || user.IsInRole("Manager");
-        return (userId, isAdminOrManager);
+        return new UserContext(userId, isAdminOrManager);
     }
 }

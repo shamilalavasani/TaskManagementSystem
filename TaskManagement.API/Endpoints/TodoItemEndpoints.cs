@@ -23,10 +23,10 @@ public static class TodoItemEndpoints
     private static async Task<IResult> GetAllTodoItems([AsParameters] TodoQueryParametersDto query, ITodoItemService service, ClaimsPrincipal user)
     {
         var userContext = user.GetUserContext();
-        if (userContext is null)
+        if (userContext is not { } ctx)
             return Results.Unauthorized();
 
-        var (userId, isAdminOrManager) = userContext.Value;
+        var (userId, isAdminOrManager) = ctx;
 
         var items = await service.GetAllTodoItemsAsync(query, userId, isAdminOrManager);
         return Results.Ok(items);
@@ -35,10 +35,10 @@ public static class TodoItemEndpoints
     private static async Task<IResult> GetTodoItemById(Guid id, ITodoItemService service, ClaimsPrincipal user)
     {
         var userContext = user.GetUserContext();
-        if (userContext is null)
+        if (userContext is not { } ctx)
             return Results.Unauthorized();
 
-        var (userId, isAdminOrManager) = userContext.Value;
+        var (userId, isAdminOrManager) = ctx;
         var item = await service.GetTodoItemByIdAsync(id, userId, isAdminOrManager);
 
         return Results.Ok(item);
@@ -47,10 +47,10 @@ public static class TodoItemEndpoints
     private static async Task<IResult> CreateTodoItem(CreateTodoItemDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
         var userContext = user.GetUserContext();
-        if (userContext is null)
+        if (userContext is not { } ctx)
             return Results.Unauthorized();
 
-        var (userId, _) = userContext.Value;
+        var (userId, isAdminOrManager) = ctx;
         var createdItem = await service.CreateTodoItemAsync(dto, userId);
         return Results.Created($"/todos/{createdItem.Id}", createdItem);
     }
@@ -58,10 +58,10 @@ public static class TodoItemEndpoints
     private static async Task<IResult> UpdateTodoItem(Guid id, UpdateTodoItemDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
         var userContext = user.GetUserContext();
-        if (userContext is null)
+        if (userContext is not { } ctx)
             return Results.Unauthorized();
 
-        var (userId, isAdminOrManager) = userContext.Value;
+        var (userId, isAdminOrManager) = ctx;
 
         await service.UpdateTodoItemAsync(id, dto, userId, isAdminOrManager);
         return Results.NoContent();
@@ -69,10 +69,10 @@ public static class TodoItemEndpoints
     private static async Task<IResult> UpdateStatusTodoItem(Guid id, UpdateTodoItemStatusDto dto, ITodoItemService service, ClaimsPrincipal user)
     {
         var userContext = user.GetUserContext();
-        if (userContext is null)
+        if (userContext is not { } ctx)
             return Results.Unauthorized();
 
-        var (userId, isAdminOrManager) = userContext.Value;
+        var (userId, isAdminOrManager) = ctx;
 
 
         await service.UpdateStatusTodoItemAsync(id, dto.Status, userId, isAdminOrManager);
@@ -82,10 +82,10 @@ public static class TodoItemEndpoints
     private static async Task<IResult> DeleteTodoItem(Guid id, ITodoItemService service, ClaimsPrincipal user)
     {
         var userContext = user.GetUserContext();
-        if (userContext is null)
+        if (userContext is not { } ctx)
             return Results.Unauthorized();
 
-        var (userId, isAdminOrManager) = userContext.Value;
+        var (userId, isAdminOrManager) = ctx;
 
         await service.DeleteTodoItemAsync(id, userId, isAdminOrManager);
         return Results.NoContent();

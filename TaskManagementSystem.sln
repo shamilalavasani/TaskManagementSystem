@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.API", "TaskManagement.API\TaskManagement.API.csproj", "{5B0405E0-47B4-8CC4-6310-BD0C14486A41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagement.Tests", "TaskManagement.Tests\TaskManagement.Tests.csproj", "{76139893-FDCB-487F-ABF1-AAA598038F89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{5B0405E0-47B4-8CC4-6310-BD0C14486A41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B0405E0-47B4-8CC4-6310-BD0C14486A41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B0405E0-47B4-8CC4-6310-BD0C14486A41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76139893-FDCB-487F-ABF1-AAA598038F89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76139893-FDCB-487F-ABF1-AAA598038F89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76139893-FDCB-487F-ABF1-AAA598038F89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76139893-FDCB-487F-ABF1-AAA598038F89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
