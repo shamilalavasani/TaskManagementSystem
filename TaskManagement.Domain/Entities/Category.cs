@@ -16,7 +16,7 @@ public class Category
 
 
     // Constructor اصلی (برای ساخت توسط برنامه)
-    public Category(string name, string? description)
+    public Category(string name, string? description = null)
     {
         Id = Guid.NewGuid();
         SetName(name);

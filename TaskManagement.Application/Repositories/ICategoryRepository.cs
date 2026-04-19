@@ -6,7 +6,7 @@ namespace TaskManagement.Application.Repositories;
 public interface ICategoryRepository
 {
     Task<Category> AddAsync(Category category);
-    Task<Category> GetByIdAsync(Guid id);
+    Task<Category?> GetByIdAsync(Guid id);
     Task<PagedResultDto<Category>> GetAllAsync(CategoryQueryParametersDto query);
     Task UpdateAsync(Category category);
     Task DeleteAsync(Category category);
