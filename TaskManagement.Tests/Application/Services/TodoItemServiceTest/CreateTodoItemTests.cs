@@ -16,7 +16,7 @@ public class CreateTodoItemTests : TodoItemServiceTestBase
         // Arrange
         var (repoMock, categoryMock, service) = CreateServiceWithMocks();
         var userId = "test-user-id";
-        var categoryId = Guid.NewGuid(); ;
+        var categoryId = Guid.NewGuid();
 
         var createDto = new CreateTodoItemDto
         {
@@ -27,15 +27,23 @@ public class CreateTodoItemTests : TodoItemServiceTestBase
             Priority = TodoPriority.Medium
         };
 
-        var category = new Category("Work");
-
+        // var category = new Category("Work");
+        TodoItem? createdTodo = null;
         categoryMock
-            .Setup(x => x.GetByIdAsync(createDto.CategoryId))
-            .ReturnsAsync((Category?)category);
+           .Setup(x => x.ExistsAsync(categoryId))
+           .ReturnsAsync(true);
 
         repoMock
-            .Setup(x => x.AddAsync(It.IsAny<TodoItem>()))
-            .ReturnsAsync((TodoItem todoItem) => todoItem);
+       .Setup(x => x.AddAsync(It.IsAny<TodoItem>()))
+       .ReturnsAsync((TodoItem todoItem) =>
+       {
+           createdTodo = todoItem;
+           return todoItem;
+       });
+
+        repoMock
+            .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+            .ReturnsAsync((Guid id) => createdTodo);
 
         // Act
         var result = await service.CreateTodoItemAsync(createDto, userId);
@@ -49,6 +57,7 @@ public class CreateTodoItemTests : TodoItemServiceTestBase
         result.Priority.Should().Be(createDto.Priority);
 
         repoMock.Verify(x => x.AddAsync(It.IsAny<TodoItem>()), Times.Once);
+        repoMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
     }
 
     [Fact]
@@ -66,8 +75,9 @@ public class CreateTodoItemTests : TodoItemServiceTestBase
             Priority = TodoPriority.High
         };
 
-        categoryMock.Setup(x => x.GetByIdAsync(createDto.CategoryId))
-            .ReturnsAsync((Category?)null);
+        categoryMock
+        .Setup(x => x.ExistsAsync(createDto.CategoryId))
+        .ReturnsAsync(false);
 
         // Act
         Func<Task> act = async () => await service.CreateTodoItemAsync(createDto, userId);
@@ -95,13 +105,21 @@ public class CreateTodoItemTests : TodoItemServiceTestBase
             Priority = TodoPriority.Low
         };
 
-        categoryMock
-            .Setup(x => x.GetByIdAsync(categoryId))
-            .ReturnsAsync((Category?)new Category("Personal"));
 
+        categoryMock
+  .Setup(x => x.ExistsAsync(createDto.CategoryId))
+  .ReturnsAsync(true);
+        TodoItem? createdTodo = null;
         repoMock
-            .Setup(x => x.AddAsync(It.IsAny<TodoItem>()))
-            .ReturnsAsync((TodoItem todoItem) => todoItem);
+       .Setup(x => x.AddAsync(It.IsAny<TodoItem>()))
+       .ReturnsAsync((TodoItem todoItem) =>
+       {
+           createdTodo = todoItem;
+           return todoItem;
+       });
+        repoMock
+           .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+           .ReturnsAsync((Guid id) => createdTodo);
 
         // Act
         await service.CreateTodoItemAsync(createDto, userId);
@@ -114,6 +132,7 @@ public class CreateTodoItemTests : TodoItemServiceTestBase
             t.CategoryId == createDto.CategoryId &&
             t.Priority == createDto.Priority
         )), Times.Once);
+        repoMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
     }
     [Fact]
     public async Task CreateTodoItemAsync_Should_Return_Dto_With_Default_Status()
@@ -133,12 +152,21 @@ public class CreateTodoItemTests : TodoItemServiceTestBase
         };
 
         categoryMock
-            .Setup(x => x.GetByIdAsync(categoryId))
-            .ReturnsAsync(new Category("Work"));
+     .Setup(x => x.ExistsAsync(createDto.CategoryId))
+     .ReturnsAsync(true);
 
+        TodoItem? createdTodo = null;
         repoMock
-            .Setup(x => x.AddAsync(It.IsAny<TodoItem>()))
-            .ReturnsAsync((TodoItem todoItem) => todoItem);
+       .Setup(x => x.AddAsync(It.IsAny<TodoItem>()))
+       .ReturnsAsync((TodoItem todoItem) =>
+       {
+           createdTodo = todoItem;
+           return todoItem;
+       });
+        repoMock
+           .Setup(x => x.GetByIdAsync(It.IsAny<Guid>()))
+           .ReturnsAsync((Guid id) => createdTodo);
+
 
         // Act
         var result = await service.CreateTodoItemAsync(createDto, userId);
@@ -147,5 +175,6 @@ public class CreateTodoItemTests : TodoItemServiceTestBase
         result.CompletionStatus.Should().Be(TodoItemStatus.Pending);
         result.Id.Should().NotBe(Guid.Empty);
         result.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5));
+        repoMock.Verify(x => x.GetByIdAsync(It.IsAny<Guid>()), Times.Once);
     }
 }

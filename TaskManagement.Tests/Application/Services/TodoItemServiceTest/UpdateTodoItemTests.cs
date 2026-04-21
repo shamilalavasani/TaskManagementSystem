@@ -328,7 +328,7 @@ public class UpdateTodoItemTests : TodoItemServiceTestBase
                 isAdminOrManager: false);
 
         // Assert
-        await act.Should().ThrowAsync<BadRequestException>();
+        await act.Should().ThrowAsync<ArgumentException>();
 
         repoMock.Verify(r => r.UpdateAsync(It.IsAny<TodoItem>()), Times.Never);
     }
