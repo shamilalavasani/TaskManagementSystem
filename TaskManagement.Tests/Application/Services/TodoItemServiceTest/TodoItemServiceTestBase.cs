@@ -22,6 +22,7 @@ public abstract class TodoItemServiceTestBase
             priority);
     }
 
+
     protected (Mock<ITodoItemRepository>, Mock<ICategoryRepository>, AppService.TodoItemService) CreateServiceWithMocks()
     {
         var repoMock = new Mock<ITodoItemRepository>();
@@ -31,4 +32,6 @@ public abstract class TodoItemServiceTestBase
 
         return (repoMock, categoryMock, service);
     }
+
 }
+
