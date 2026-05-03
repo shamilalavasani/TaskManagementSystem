@@ -26,7 +26,7 @@ public abstract class TodoItemServiceTestBase
     {
         var repoMock = new Mock<ITodoItemRepository>();
         var categoryMock = new Mock<ICategoryRepository>();
-        // constructor requires both repositories, but category repository is not used in this test, so we can just create a mock without setup
+
         var service = new AppService.TodoItemService(repoMock.Object, categoryMock.Object);
 
         return (repoMock, categoryMock, service);

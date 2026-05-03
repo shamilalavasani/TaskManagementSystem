@@ -73,32 +73,31 @@ public class TodoItem
     }
     public void ChangeStatus(TodoItemStatus newStatus)
     {
-        if (CompletionStatus == newStatus)
-            return;
-
-        switch (CompletionStatus)
-        {
-            case TodoItemStatus.Pending:
-                if (newStatus != TodoItemStatus.InProgress && newStatus != TodoItemStatus.Cancelled)
-                    throw new InvalidOperationException("Invalid status transition from Pending.");
-                break;
-
-            case TodoItemStatus.InProgress:
-                if (newStatus != TodoItemStatus.Completed && newStatus != TodoItemStatus.Cancelled)
-                    throw new InvalidOperationException("Invalid status transition from InProgress.");
-                break;
-
-            case TodoItemStatus.Completed:
-            case TodoItemStatus.Cancelled:
-                throw new InvalidOperationException("Cannot change status once it is Completed or Cancelled.");
-        }
+        if (!CanChangeStatusTo(newStatus))
+            throw new InvalidOperationException(
+                $"Cannot change status from {CompletionStatus} to {newStatus}.");
 
         CompletionStatus = newStatus;
     }
-    //these are ok:
-    //Pending → InProgress
-    //InProgress → Completed
-    //Pending → Cancelled
-    //InProgress → Cancelled
+    public bool CanChangeStatusTo(TodoItemStatus newStatus)
+    {
+        if (CompletionStatus == newStatus)
+            return true;
+
+        return CompletionStatus switch
+        {
+            TodoItemStatus.Pending =>
+                newStatus is TodoItemStatus.InProgress or TodoItemStatus.Cancelled,
+
+            TodoItemStatus.InProgress =>
+                newStatus is TodoItemStatus.Completed or TodoItemStatus.Cancelled,
+
+            TodoItemStatus.Completed or TodoItemStatus.Cancelled =>
+                false,
+
+            _ => false
+        };
+    }
+
 
 }
