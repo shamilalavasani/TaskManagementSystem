@@ -1,10 +1,10 @@
-# 🧠 Task Management System (ASP.NET Core Minimal API)
+#  Task Management System (ASP.NET Core Minimal API)
 
 A clean and scalable **Task Management API** built with **ASP.NET Core (.NET 8)** using **Minimal APIs** and **Clean Architecture** principles.
 
 ---
 
-## 🚀 Features
+##  Features
 
 * ✅ Minimal API architecture
 * ✅ Clean Architecture (API / Application / Domain / Infrastructure)
@@ -18,7 +18,7 @@ A clean and scalable **Task Management API** built with **ASP.NET Core (.NET 8)*
 
 ---
 
-## 🧱 Project Structure
+##  Project Structure
 
 ```
 TaskManagement.API
@@ -34,7 +34,7 @@ TaskManagement.Infrastructure
 
 ---
 
-## 🔐 Authentication & Authorization
+##  Authentication & Authorization
 
 * JWT-based authentication
 * Role-based access (Admin, Manager, User)
@@ -42,7 +42,7 @@ TaskManagement.Infrastructure
 
 ---
 
-## ⚙️ Configuration (Important)
+##  Configuration (Important)
 
 This project uses **User Secrets** for sensitive data.
 
@@ -54,7 +54,7 @@ dotnet user-secrets set "JwtSettings:Key" "YOUR_SECRET_KEY_HERE"
 
 ---
 
-## 🧪 Running the Project
+##  Running the Project
 
 1. Clone the repository
 2. Set JWT secret (see above)
@@ -78,7 +78,7 @@ https://localhost:<port>/swagger
 
 ---
 
-## 📌 API Highlights
+##  API Highlights
 
 ### Todos
 
@@ -96,7 +96,7 @@ https://localhost:<port>/swagger
 
 ---
 
-## 🧠 Key Concepts Implemented
+##  Key Concepts Implemented
 
 * Custom Exception Handling Middleware
 * Claims-based User Context Extraction
@@ -106,7 +106,7 @@ https://localhost:<port>/swagger
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 * ASP.NET Core (.NET 8)
 * Entity Framework Core
@@ -117,7 +117,7 @@ https://localhost:<port>/swagger
 
 ---
 
-## 📈 Future Improvements
+##  Future Improvements
 
 * Unit & Integration Tests
 * Docker Support
@@ -127,6 +127,6 @@ https://localhost:<port>/swagger
 
 ---
 
-## 👩‍💻 Author
+##  Author
 
 Shamila Lavasani
