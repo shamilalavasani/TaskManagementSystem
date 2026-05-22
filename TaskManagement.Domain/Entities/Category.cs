@@ -15,7 +15,6 @@ public class Category
     public ICollection<TodoItem> TodoItems { get; private set; } = new List<TodoItem>();
 
 
-    // Constructor اصلی (برای ساخت توسط برنامه)
     public Category(string name, string? description = null)
     {
         Id = Guid.NewGuid();
@@ -24,8 +23,7 @@ public class Category
         CreatedAt = DateTime.UtcNow;
     }
 
-    // Constructor خالی (برای EF Core)
-    private Category() { }
+    private Category() { } // EF Core
 
 
     // Methods (Domain Behavior)

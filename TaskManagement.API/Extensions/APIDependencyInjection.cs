@@ -19,7 +19,6 @@ public static class ApiDependencyInjection
         services.AddSwaggerGen(options =>
         {
             options.UseInlineDefinitionsForEnums();
-            // 🔐 تعریف Bearer
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -30,7 +29,6 @@ public static class ApiDependencyInjection
                 Description = "Enter 'Bearer' [space] and then your token"
             });
 
-            // 🔐 اعمال به همه endpointها
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
      {
 
