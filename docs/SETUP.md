@@ -2,6 +2,8 @@
 
 Step-by-step guide to run the API on your machine.
 
+**Persian guide:** [SETUP-FA.md](SETUP-FA.md)
+
 ## Prerequisites
 
 1. [.NET 9 SDK](https://dotnet.microsoft.com/download)

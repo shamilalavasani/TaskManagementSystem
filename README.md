@@ -63,7 +63,10 @@ TaskManagementSystem/
 
 ## Local setup (Windows)
 
-Step-by-step guide: [docs/SETUP.md](docs/SETUP.md)
+| Language | Guide |
+|----------|--------|
+| English | [docs/SETUP.md](docs/SETUP.md) |
+| Persian | [docs/SETUP-FA.md](docs/SETUP-FA.md) |
 
 One-command setup from solution root:
 
@@ -243,7 +246,7 @@ GET /health
 docker compose up --build
 ```
 
-API: `http://localhost:8080` — run EF migrations from the host against `localhost,1433` before first use (see [docs/SETUP.md](docs/SETUP.md)).
+API: `http://localhost:8080` — run EF migrations from the host against `localhost,1433` before first use (see [docs/SETUP.md](docs/SETUP.md) or [docs/SETUP-FA.md](docs/SETUP-FA.md)).
 
 ## Road to release
 
