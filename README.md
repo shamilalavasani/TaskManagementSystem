@@ -4,6 +4,8 @@ REST API for managing personal and team tasks, built with **ASP.NET Core 9**, **
 
 **Repository:** [github.com/shamilalavasani/TaskManagementSystem](https://github.com/shamilalavasani/TaskManagementSystem)
 
+**Portfolio notes:** [docs/RELEASE.md](docs/RELEASE.md)
+
 ## Features
 
 - Minimal API endpoints with Swagger (Development only)
@@ -248,9 +250,9 @@ docker compose up --build
 
 API: `http://localhost:8080` — run EF migrations from the host against `localhost,1433` before first use (see [docs/SETUP.md](docs/SETUP.md) or [docs/SETUP-FA.md](docs/SETUP-FA.md)).
 
-## Road to release
+## Portfolio
 
-For remaining items (CI, LICENSE, GitHub tag), see [docs/RELEASE.md](docs/RELEASE.md).
+This repo is a backend portfolio sample. Scope and demo features are summarized in [docs/RELEASE.md](docs/RELEASE.md).
 
 ## Author
 
