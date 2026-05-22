@@ -1,6 +1,6 @@
 #  Task Management System (ASP.NET Core Minimal API)
 
-A clean and scalable **Task Management API** built with **ASP.NET Core (.NET 8)** using **Minimal APIs** and **Clean Architecture** principles.
+A clean and scalable **Task Management API** built with **ASP.NET Core (.NET 9)** using **Minimal APIs** and **Clean Architecture** principles.
 
 ---
 
@@ -108,7 +108,7 @@ https://localhost:<port>/swagger
 
 ##  Tech Stack
 
-* ASP.NET Core (.NET 8)
+* ASP.NET Core (.NET 9)
 * Entity Framework Core
 * SQL Server
 * FluentValidation
