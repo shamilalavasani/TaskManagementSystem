@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using TaskManagement.Application.DTOs.CommonDTOs;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.Repositories;
@@ -170,27 +170,35 @@ public class TodoItemRepository : ITodoItemRepository
 
 
 
-    public async Task<IEnumerable<TodoItem>> GetDueInNext7DaysAsync()
+    public async Task<IEnumerable<TodoItem>> GetDueInNext7DaysAsync(string? ownerUserId = null)
     {
-        return await _context.TodoItems
+        var query = _context.TodoItems
              .Include(t => t.Category)
              .AsNoTracking()
              .Where(t => t.DueDate > DateTime.UtcNow
                     && t.DueDate <= DateTime.UtcNow.AddDays(7)
                     && t.CompletionStatus != TodoItemStatus.Completed
-                    && t.CompletionStatus != TodoItemStatus.Cancelled)
-             .ToListAsync();
+                    && t.CompletionStatus != TodoItemStatus.Cancelled);
+
+        if (!string.IsNullOrWhiteSpace(ownerUserId))
+            query = query.Where(t => t.OwnerUserId == ownerUserId);
+
+        return await query.ToListAsync();
     }
 
-    public async Task<IEnumerable<TodoItem>> GetOverdueAsync()
+    public async Task<IEnumerable<TodoItem>> GetOverdueAsync(string? ownerUserId = null)
     {
-        return await _context.TodoItems
+        var query = _context.TodoItems
             .Include(t => t.Category)
             .AsNoTracking()
             .Where(t => t.DueDate < DateTime.UtcNow
                  && t.CompletionStatus != TodoItemStatus.Completed
-                 && t.CompletionStatus != TodoItemStatus.Cancelled)
-            .ToListAsync();
+                 && t.CompletionStatus != TodoItemStatus.Cancelled);
+
+        if (!string.IsNullOrWhiteSpace(ownerUserId))
+            query = query.Where(t => t.OwnerUserId == ownerUserId);
+
+        return await query.ToListAsync();
     }
 
     public async Task UpdateAsync(TodoItem todoItem)

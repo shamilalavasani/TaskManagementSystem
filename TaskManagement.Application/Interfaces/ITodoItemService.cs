@@ -1,4 +1,4 @@
-﻿using TaskManagement.Application.DTOs.CommonDTOs;
+using TaskManagement.Application.DTOs.CommonDTOs;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
 using TaskManagement.Domain.Enums;
@@ -13,9 +13,9 @@ public interface ITodoItemService
     Task UpdateTodoItemAsync(Guid id, UpdateTodoItemDto updateDto, string userId, bool isAdminOrManager);
     Task UpdateStatusTodoItemAsync(Guid id, TodoItemStatus updateStatus, string userId, bool isAdminOrManager);
     Task DeleteTodoItemAsync(Guid id, string userId, bool isAdminOrManager);
-    Task<IEnumerable<TodoItemDto>> GetOverdueTodoItemsAsync();
+    Task<IEnumerable<TodoItemDto>> GetOverdueTodoItemsAsync(string userId, bool isAdminOrManager);
 
-    Task<IEnumerable<TodoItemDto>> GetTodoItemsDueInNext7DaysAsync();
+    Task<IEnumerable<TodoItemDto>> GetTodoItemsDueInNext7DaysAsync(string userId, bool isAdminOrManager);
 
 }
 

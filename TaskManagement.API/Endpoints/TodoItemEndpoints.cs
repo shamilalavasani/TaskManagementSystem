@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using TaskManagement.API.Extensions;
 using TaskManagement.Application.Common.Security;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
@@ -90,14 +90,24 @@ public static class TodoItemEndpoints
         await service.DeleteTodoItemAsync(id, userId, isAdminOrManager);
         return Results.NoContent();
     }
-    private static async Task<IResult> GetOverdueTodoItems(ITodoItemService service)
+    private static async Task<IResult> GetOverdueTodoItems(ITodoItemService service, ClaimsPrincipal user)
     {
-        var items = await service.GetOverdueTodoItemsAsync();
+        var userContext = user.GetUserContext();
+        if (userContext is not { } ctx)
+            return Results.Unauthorized();
+
+        var (userId, isAdminOrManager) = ctx;
+        var items = await service.GetOverdueTodoItemsAsync(userId, isAdminOrManager);
         return Results.Ok(items);
     }
-    private static async Task<IResult> GetTodoItemsDueInNext7Days(ITodoItemService service)
+    private static async Task<IResult> GetTodoItemsDueInNext7Days(ITodoItemService service, ClaimsPrincipal user)
     {
-        var items = await service.GetTodoItemsDueInNext7DaysAsync();
+        var userContext = user.GetUserContext();
+        if (userContext is not { } ctx)
+            return Results.Unauthorized();
+
+        var (userId, isAdminOrManager) = ctx;
+        var items = await service.GetTodoItemsDueInNext7DaysAsync(userId, isAdminOrManager);
         return Results.Ok(items);
     }
 }

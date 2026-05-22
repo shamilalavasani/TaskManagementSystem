@@ -1,132 +1,257 @@
-#  Task Management System (ASP.NET Core Minimal API)
+# Task Management System
 
-A clean and scalable **Task Management API** built with **ASP.NET Core (.NET 9)** using **Minimal APIs** and **Clean Architecture** principles.
+REST API for managing personal and team tasks, built with **ASP.NET Core 9**, **Minimal APIs**, and **Clean Architecture**.
 
----
+**Repository:** [github.com/shamilalavasani/TaskManagementSystem](https://github.com/shamilalavasani/TaskManagementSystem)
 
-##  Features
+## Features
 
-* ✅ Minimal API architecture
-* ✅ Clean Architecture (API / Application / Domain / Infrastructure)
-* ✅ JWT Authentication
-* ✅ Role-based & Ownership-based Authorization
-* ✅ Global Exception Handling (custom exceptions)
-* ✅ Validation using FluentValidation
-* ✅ Pagination & Filtering
-* ✅ Category management
-* ✅ Logging with Middleware
+- Minimal API endpoints with Swagger (Development only)
+- Clean Architecture: API, Application, Domain, Infrastructure
+- JWT authentication and ASP.NET Core Identity
+- Role-based authorization: `Admin`, `Manager`, `User`
+- Ownership-based access for todos (users see only their own tasks unless Admin/Manager)
+- Categories with role-gated create/update/delete
+- FluentValidation on request DTOs
+- Pagination, filtering, search, and sorting for todos and categories
+- Global exception handling middleware
+- Request/response logging middleware
+- Serilog logging to console and SQL Server
+- Unit tests (xUnit, Moq, FluentAssertions)
 
----
+## Tech stack
 
-##  Project Structure
+| Layer | Technologies |
+|-------|----------------|
+| Runtime | .NET 9 |
+| API | ASP.NET Core Minimal APIs, Swashbuckle |
+| Data | EF Core 9, SQL Server |
+| Auth | ASP.NET Core Identity, JWT Bearer |
+| Validation | FluentValidation |
+| Logging | Serilog (Console + MSSqlServer sink) |
+| Tests | xUnit, Moq, FluentAssertions |
+
+## Solution structure
 
 ```
-TaskManagement.API
-TaskManagement.Application
-TaskManagement.Domain
-TaskManagement.Infrastructure
+TaskManagementSystem/
+├── TaskManagement.API/              # HTTP host, endpoints, middleware, Swagger
+├── TaskManagement.Application/      # Services, DTOs, validators, repository contracts
+├── TaskManagement.Domain/           # Entities and enums (no framework dependencies)
+├── TaskManagement.Infrastructure/   # EF Core, Identity, repositories, migrations
+└── TaskManagement.Tests/            # Unit tests for Domain and Application
 ```
 
-* **API** → Endpoints, Middleware, Extensions
-* **Application** → Services, DTOs, Interfaces
-* **Domain** → Entities, Enums
-* **Infrastructure** → EF Core, Repositories, Identity
+### Layer responsibilities
 
----
+| Project | Responsibility |
+|---------|----------------|
+| **Domain** | `TodoItem`, `Category`, business rules (status transitions, validation) |
+| **Application** | Use cases, DTOs, FluentValidation, custom exceptions |
+| **Infrastructure** | `AppDbContext`, repositories, `AuthService`, JWT token generation |
+| **API** | Route mapping, authorization policies, middleware, DI composition |
 
-##  Authentication & Authorization
+## Prerequisites
 
-* JWT-based authentication
-* Role-based access (Admin, Manager, User)
-* Ownership-based access control (users can only access their own tasks)
+- [.NET 9 SDK](https://dotnet.microsoft.com/download)
+- SQL Server (LocalDB, Express, or full instance)
+- EF Core tools (optional, for migrations):
 
----
+  ```bash
+  dotnet tool install --global dotnet-ef
+  ```
 
-##  Configuration (Important)
+## Local setup (Windows)
 
-This project uses **User Secrets** for sensitive data.
+Persian step-by-step guide: [docs/SETUP-FA.md](docs/SETUP-FA.md)
 
-### ❗ You MUST set JWT Secret before running the project:
+One-command setup from solution root:
 
-```bash
-dotnet user-secrets set "JwtSettings:Key" "YOUR_SECRET_KEY_HERE"
-```
-
----
-
-##  Running the Project
-
-1. Clone the repository
-2. Set JWT secret (see above)
-3. Update database:
-
-```bash
-dotnet ef database update
-```
-
-4. Run the project:
-
-```bash
+```powershell
+.\scripts\setup-local.ps1
+cd TaskManagement.API
 dotnet run
 ```
 
-5. Open Swagger:
+Copy [.env.example](.env.example) for required environment variable names.
+
+## Quick start
+
+### 1. Clone and restore
+
+```bash
+git clone https://github.com/shamilalavasani/TaskManagementSystem.git
+cd TaskManagementSystem
+dotnet restore
+```
+
+### 2. Configure JWT secret (required)
+
+The signing key must **not** be committed. Set it via User Secrets from the API project:
+
+```bash
+cd TaskManagement.API
+dotnet user-secrets set "JwtSettings:Key" "YOUR_LONG_RANDOM_SECRET_AT_LEAST_32_CHARS"
+```
+
+For production, use environment variables or your host's secret store instead of User Secrets.
+
+### 3. Database connection
+
+Default connection string in `TaskManagement.API/appsettings.json`:
 
 ```
-https://localhost:<port>/swagger
+Server=.;Database=TaskManagementDb;Trusted_Connection=True;TrustServerCertificate=True
 ```
 
----
+Override for your environment in `appsettings.Development.json`, User Secrets, or environment variables:
 
-##  API Highlights
+```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=...;Database=...;..."
+```
 
-### Todos
+### 4. Apply migrations
 
-* Create Todo
-* Get All (with pagination & filtering)
-* Get By Id (ownership enforced)
-* Update Todo
-* Update Status
-* Delete (ownership enforced)
+From the solution root:
 
-### Categories
+```bash
+dotnet ef database update --project TaskManagement.Infrastructure --startup-project TaskManagement.API
+```
 
-* Create / Update / Delete
-* Unique name validation
+### 5. Run the API
 
----
+```bash
+cd TaskManagement.API
+dotnet run
+```
 
-##  Key Concepts Implemented
+- HTTP: `http://localhost:5013`
+- HTTPS: `https://localhost:7205`
+- Swagger UI (Development): `https://localhost:7205/swagger`
 
-* Custom Exception Handling Middleware
-* Claims-based User Context Extraction
-* Reusable Ownership Validation
-* Clean separation of concerns
-* Extension methods for cleaner endpoints
+On startup, default roles (`Admin`, `Manager`, `User`) are seeded automatically.
 
----
+## Configuration
 
-##  Tech Stack
+| Setting | Location | Description |
+|---------|----------|-------------|
+| `ConnectionStrings:DefaultConnection` | `appsettings.json` / secrets / env | SQL Server |
+| `JwtSettings:Key` | User Secrets / env | JWT signing key (**required**) |
+| `JwtSettings:Issuer` | `appsettings.json` | Token issuer (`TaskManagementApp`) |
+| `JwtSettings:Audience` | `appsettings.json` | Token audience (`TaskManagementUsers`) |
+| `JwtSettings:ExpireMinutes` | `appsettings.json` | Token lifetime (default: 60) |
+| `Serilog` | `appsettings.json` | Console + SQL table `Logs` |
 
-* ASP.NET Core (.NET 9)
-* Entity Framework Core
-* SQL Server
-* FluentValidation
-* JWT Authentication
-* Serilog
+## Authentication and authorization
 
----
+### Register and login
 
-##  Future Improvements
+| Method | Path | Auth |
+|--------|------|------|
+| POST | `/auth/register` | Public |
+| POST | `/auth/login` | Public |
 
-* Unit & Integration Tests
-* Docker Support
-* Caching (Redis)
-* Background Jobs
-* Advanced Authorization Policies
+Response includes `accessToken`, `expireAt`, and `email`. Send the token on protected routes:
 
----
+```
+Authorization: Bearer <token>
+```
 
-##  Author
+New users are assigned the **User** role by default.
 
-Shamila Lavasani
+### Roles
+
+| Role | Todos | Categories |
+|------|-------|------------|
+| **User** | Own todos only | Read only |
+| **Manager** | All todos | Create, update |
+| **Admin** | All todos | Create, update, delete |
+
+### Protected route policies
+
+- Most todo and category routes require `UserOrAbove`.
+- Category create/update: `CanManageCategories` (Manager, Admin).
+- Category delete: `CanDeleteCategories` (Admin only).
+
+## API reference
+
+Base URL: `/` (see launch settings for host/port).
+
+### Todos (`/todos`) — requires JWT
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/todos` | List with pagination, filters, search, sort |
+| GET | `/todos/{id}` | Get by id (ownership enforced for User) |
+| POST | `/todos` | Create (owner = current user) |
+| PUT | `/todos/{id}` | Update details and status |
+| PATCH | `/todos/{id}/status` | Update completion status only |
+| DELETE | `/todos/{id}` | Delete (ownership enforced for User) |
+| GET | `/todos/overdue` | Overdue items |
+| GET | `/todos/due-next-7-days` | Items due within 7 days |
+
+**Query parameters** (`GET /todos`): `pageNumber`, `pageSize`, `status`, `dueBefore`, `dueAfter`, `search`, `sortBy`, `sortDirection`.
+
+### Categories (`/categories`) — requires JWT
+
+| Method | Path | Auth policy |
+|--------|------|-------------|
+| GET | `/categories` | UserOrAbove |
+| GET | `/categories/{id}` | UserOrAbove |
+| POST | `/categories` | CanManageCategories |
+| PUT | `/categories/{id}` | CanManageCategories |
+| DELETE | `/categories/{id}` | CanDeleteCategories |
+
+## Todo status workflow
+
+```
+Pending → InProgress | Cancelled
+InProgress → Completed | Cancelled
+Completed / Cancelled → (no further changes)
+```
+
+## Build and test
+
+```bash
+dotnet build -c Release
+dotnet test -c Release
+```
+
+## EF Core migrations
+
+Add a new migration:
+
+```bash
+dotnet ef migrations add <MigrationName> --project TaskManagement.Infrastructure --startup-project TaskManagement.API
+```
+
+Apply to database:
+
+```bash
+dotnet ef database update --project TaskManagement.Infrastructure --startup-project TaskManagement.API
+```
+
+## Health check
+
+```
+GET /health
+```
+
+## Docker (optional)
+
+```bash
+docker compose up --build
+```
+
+API: `http://localhost:8080` — run EF migrations from the host against `localhost,1433` before first use (see [docs/SETUP-FA.md](docs/SETUP-FA.md)).
+
+## Road to release
+
+For remaining items (CI, LICENSE, GitHub tag), see [docs/RELEASE.md](docs/RELEASE.md).
+
+## Author
+
+**Shamila Lavasani**
+
+- GitHub: [shamilalavasani](https://github.com/shamilalavasani)
+- Project: [TaskManagementSystem](https://github.com/shamilalavasani/TaskManagementSystem)

@@ -1,4 +1,3 @@
-﻿
 using TaskManagement.Application.DTOs.AuthDTOs;
 using TaskManagement.Application.Interfaces;
 
@@ -10,18 +9,22 @@ public static class AuthEndpoints
     {
         var group = app.MapGroup("/auth").WithTags("Auth");
 
-        // Register
-        group.MapPost("/register", async (RegisterRequestDto request, IAuthService authService) =>
-        {
-            var result = await authService.RegisterAsync(request);
-            return Results.Ok(result);
-        });
+        group.MapPost("/register", Register)
+            .AddEndpointFilter<ValidationFilter<RegisterRequestDto>>();
 
-        // Login
-        group.MapPost("/login", async (LoginRequestDto request, IAuthService authService) =>
-        {
-            var result = await authService.LoginAsync(request);
-            return Results.Ok(result);
-        });
+        group.MapPost("/login", Login)
+            .AddEndpointFilter<ValidationFilter<LoginRequestDto>>();
+    }
+
+    private static async Task<IResult> Register(RegisterRequestDto request, IAuthService authService)
+    {
+        var result = await authService.RegisterAsync(request);
+        return Results.Ok(result);
+    }
+
+    private static async Task<IResult> Login(LoginRequestDto request, IAuthService authService)
+    {
+        var result = await authService.LoginAsync(request);
+        return Results.Ok(result);
     }
 }

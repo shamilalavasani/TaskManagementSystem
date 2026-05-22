@@ -1,4 +1,4 @@
-﻿using TaskManagement.Application.Common.Exceptions;
+using TaskManagement.Application.Common.Exceptions;
 using TaskManagement.Application.DTOs.CommonDTOs;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Application.DTOs.TodoItemDTOs;
@@ -68,9 +68,10 @@ public class TodoItemService : ITodoItemService
         };
 
     }
-    public async Task<IEnumerable<TodoItemDto>> GetOverdueTodoItemsAsync()
+    public async Task<IEnumerable<TodoItemDto>> GetOverdueTodoItemsAsync(string userId, bool isAdminOrManager)
     {
-        var items = await _repository.GetOverdueAsync();
+        var ownerFilter = isAdminOrManager ? null : userId;
+        var items = await _repository.GetOverdueAsync(ownerFilter);
         return items.Select(MapToDto);
     }
     public async Task<TodoItemDto> GetTodoItemByIdAsync(Guid id, string userId, bool isAdminOrManager)
@@ -78,9 +79,10 @@ public class TodoItemService : ITodoItemService
         var item = await GetOwnedTodoOrThrowAsync(id, userId, isAdminOrManager);
         return MapToDto(item);
     }
-    public async Task<IEnumerable<TodoItemDto>> GetTodoItemsDueInNext7DaysAsync()
+    public async Task<IEnumerable<TodoItemDto>> GetTodoItemsDueInNext7DaysAsync(string userId, bool isAdminOrManager)
     {
-        var items = await _repository.GetDueInNext7DaysAsync();
+        var ownerFilter = isAdminOrManager ? null : userId;
+        var items = await _repository.GetDueInNext7DaysAsync(ownerFilter);
         return items.Select(MapToDto);
     }
     public async Task UpdateTodoItemAsync(Guid id, UpdateTodoItemDto updateDto, string userId, bool isAdminOrManager)

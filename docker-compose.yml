@@ -1,0 +1,28 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: tms-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Your_Strong_Password_123!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - tms-sql-data:/var/opt/mssql
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tms-api
+    depends_on:
+      - sqlserver
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TaskManagementDb;User Id=sa;Password=Your_Strong_Password_123!;TrustServerCertificate=True"
+      JwtSettings__Key: "LOCAL_DOCKER_JWT_SECRET_KEY_MIN_32_CHARS"
+
+volumes:
+  tms-sql-data:

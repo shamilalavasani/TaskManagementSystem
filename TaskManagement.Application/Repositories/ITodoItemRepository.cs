@@ -1,4 +1,4 @@
-﻿using TaskManagement.Application.DTOs.CommonDTOs;
+using TaskManagement.Application.DTOs.CommonDTOs;
 using TaskManagement.Application.DTOs.QueryParametersDTOs;
 using TaskManagement.Domain.Entities;
 namespace TaskManagement.Application.Repositories;
@@ -10,7 +10,7 @@ public interface ITodoItemRepository
     Task<PagedResultDto<TodoItem>> GetAllAsync(TodoQueryParametersDto query);
     Task UpdateAsync(TodoItem todoItem);
     Task DeleteAsync(TodoItem todoItem);
-    Task<IEnumerable<TodoItem>> GetOverdueAsync();
-    Task<IEnumerable<TodoItem>> GetDueInNext7DaysAsync();
+    Task<IEnumerable<TodoItem>> GetOverdueAsync(string? ownerUserId = null);
+    Task<IEnumerable<TodoItem>> GetDueInNext7DaysAsync(string? ownerUserId = null);
     Task<PagedResultDto<TodoItem>> GetAllByOwnerAsync(TodoQueryParametersDto query, string ownerUserId);
 }
